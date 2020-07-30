@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:raghuvir_traders/NavigationPages/AdminHomePage.dart';
 
 class AdminLoginWidget extends StatefulWidget {
   @override
@@ -54,7 +55,9 @@ class _AdminLoginWidgetState extends State<AdminLoginWidget> {
           children: <Widget>[
             Text("Forgot Password"),
             RaisedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushNamed(context, AdminHomePage.id);
+              },
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: Text("Login"),

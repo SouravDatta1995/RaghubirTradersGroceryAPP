@@ -1,8 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:raghubir_traders/Widgets/AdminLoginWidget.dart';
-import 'package:raghubir_traders/Widgets/OTPWidget.dart';
+import 'package:raghuvir_traders/Widgets/AdminLoginWidget.dart';
+import 'package:raghuvir_traders/Widgets/OTPWidget.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -13,24 +14,42 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Stack(children: [
+      body: Stack(
+        children: [
           Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Expanded(
                 flex: 2,
-                child: Center(child: Text("RAGHUBIR TRADERS")),
+                child: Container(
+                  color: Colors.blueAccent,
+                ),
               ),
-              _customerLogin(),
               Expanded(
-                child: _adminLogin(),
+                child: Container(
+                  color: Colors.white,
+                ),
               ),
             ],
           ),
-        ]),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Expanded(
+                  flex: 2,
+                  child: Center(child: Text("RAGHUVIR TRADERS")),
+                ),
+                _customerLogin(),
+                Expanded(
+                  child: _adminLogin(),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -39,6 +58,7 @@ class _LoginState extends State<Login> {
     return Container(
       height: 170,
       child: Card(
+        elevation: 4.0,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
