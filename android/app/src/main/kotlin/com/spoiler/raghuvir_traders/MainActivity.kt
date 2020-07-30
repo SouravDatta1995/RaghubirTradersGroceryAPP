@@ -1,4 +1,4 @@
-package com.spoiler.raghubir_traders
+package com.spoiler.raghuvir_traders
 
 import io.flutter.embedding.android.FlutterActivity
 

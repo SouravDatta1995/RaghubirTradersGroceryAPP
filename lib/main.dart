@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:raghubir_traders/NavigationPages/CustomerProductOverview..dart';
-import 'package:raghubir_traders/NavigationPages/Login.dart';
+import 'package:raghuvir_traders/NavigationPages/AdminHomePage.dart';
+import 'package:raghuvir_traders/NavigationPages/CustomerHomePage..dart';
+import 'package:raghuvir_traders/NavigationPages/Login.dart';
 
 void main() {
   runApp(MyApp());
@@ -11,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'RAGHUBIR TRADERS GROCERY APP',
+      title: 'RAGHUVIR TRADERS GROCERY APP',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -30,7 +31,8 @@ class MyApp extends StatelessWidget {
       ),
       routes: {
         '/': (context) => Login(),
-        CustomerProductOverView.id: (context) => CustomerProductOverView(),
+        CustomerHomePage.id: (context) => CustomerHomePage(),
+        AdminHomePage.id: (context) => AdminHomePage(),
       },
     );
   }

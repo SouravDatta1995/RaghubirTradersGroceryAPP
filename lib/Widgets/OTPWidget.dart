@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:raghubir_traders/NavigationPages/CustomerProductOverview..dart';
+import 'package:raghuvir_traders/NavigationPages/CustomerHomePage..dart';
+import 'package:sms_otp_auto_verify/sms_otp_auto_verify.dart';
 
 class OTPWidget extends StatefulWidget {
   @override
@@ -10,6 +10,24 @@ class OTPWidget extends StatefulWidget {
 
 class _OTPWidgetState extends State<OTPWidget> {
   List<String> otp = ['', '', '', ''];
+  String _otpCode;
+  _getSignature() async {
+    String signature = await SmsRetrieved.getAppSignature();
+    print("Signature : " + signature);
+  }
+
+  _onOtpCallback(String otpCode, bool isAutofill) {
+    setState(() {
+      this._otpCode = otpCode;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getSignature();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
@@ -21,14 +39,14 @@ class _OTPWidgetState extends State<OTPWidget> {
         SizedBox(
           height: 20,
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            _otpBox(0),
-            _otpBox(1),
-            _otpBox(2),
-            _otpBox(3),
-          ],
+        TextFieldPin(
+          codeLength: 4,
+          boxSize: 46,
+          filledAfterTextChange: false,
+          textStyle: TextStyle(fontSize: 16),
+          borderStyle:
+              OutlineInputBorder(borderRadius: BorderRadius.circular(34)),
+          onOtpCallback: (code, isAutofill) => _onOtpCallback(code, isAutofill),
         ),
         SizedBox(
           height: 12,
@@ -41,7 +59,7 @@ class _OTPWidgetState extends State<OTPWidget> {
               Text('Resend'),
               RaisedButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, CustomerProductOverView.id);
+                  Navigator.pushNamed(context, CustomerHomePage.id);
                 },
                 child: Text("Submit"),
                 shape: RoundedRectangleBorder(
@@ -52,24 +70,6 @@ class _OTPWidgetState extends State<OTPWidget> {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _otpBox(int index) {
-    return SizedBox(
-      width: 40,
-      height: 40,
-      child: TextField(
-        onChanged: (value) {
-          otp[index] = value;
-        },
-        textAlign: TextAlign.center,
-        decoration: InputDecoration(
-          contentPadding: EdgeInsets.all(5.0),
-          border: OutlineInputBorder(),
-        ),
-        inputFormatters: [LengthLimitingTextInputFormatter(1)],
-      ),
     );
   }
 }
