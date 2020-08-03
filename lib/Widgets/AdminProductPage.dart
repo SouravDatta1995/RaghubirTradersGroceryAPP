@@ -1,6 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:raghuvir_traders/Elements/Product.dart';
+import 'package:raghuvir_traders/Services/ProductManagementService.dart';
+import 'package:raghuvir_traders/Widgets/AdminAddProductWidget.dart';
 
 class AdminProductPage extends StatefulWidget {
   @override
@@ -8,90 +11,145 @@ class AdminProductPage extends StatefulWidget {
 }
 
 class _AdminProductPageState extends State<AdminProductPage> {
-  int _itemLength = 4;
+  List<Product> products = [];
+  Future<List<Product>> _productsFuture;
+  int _itemLength;
+
+  @override
+  void initState() {
+    _productsFuture = ProductManagementService.getProducts();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
-      slivers: <Widget>[
-        SliverAppBar(
-          backgroundColor: Colors.white,
-          automaticallyImplyLeading: false,
-          floating: true,
-          primary: false,
-          title: Center(
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton(
-                        onChanged: (value) {},
-                        items: [
-                          DropdownMenuItem(
-                            child: Text("Vegetables"),
-                          ),
-                          DropdownMenuItem(
-                            child: Text("Fruits"),
-                          ),
-                          DropdownMenuItem(
-                            child: Text("Spices"),
-                          ),
-                        ],
+    return RefreshIndicator(
+      onRefresh: () async {
+        setState(() {
+          _productsFuture = ProductManagementService.getProducts();
+        });
+      },
+      child: CustomScrollView(
+        slivers: <Widget>[
+          SliverAppBar(
+            backgroundColor: Colors.white,
+            automaticallyImplyLeading: false,
+            floating: true,
+            primary: false,
+            title: Center(
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton(
+                          onChanged: (value) {},
+                          items: [
+                            DropdownMenuItem(
+                              child: Text("Vegetables"),
+                            ),
+                            DropdownMenuItem(
+                              child: Text("Fruits"),
+                            ),
+                            DropdownMenuItem(
+                              child: Text("Spices"),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton(
-                        onChanged: (value) {},
-                        icon: Icon(MdiIcons.sortVariant),
-                        items: [
-                          DropdownMenuItem(
-                            child: Text("Popularity"),
-                          ),
-                          DropdownMenuItem(
-                            child: Text("A-Z"),
-                          ),
-                          DropdownMenuItem(
-                            child: Text("Z-A"),
-                          ),
-                          DropdownMenuItem(
-                            child: Text("Price High-Low"),
-                          ),
-                          DropdownMenuItem(
-                            child: Text("Price Low-High"),
-                          ),
-                        ],
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton(
+                          onChanged: (value) {},
+                          icon: Icon(MdiIcons.sortVariant),
+                          items: [
+                            DropdownMenuItem(
+                              child: Text("Popularity"),
+                            ),
+                            DropdownMenuItem(
+                              child: Text("A-Z"),
+                            ),
+                            DropdownMenuItem(
+                              child: Text("Z-A"),
+                            ),
+                            DropdownMenuItem(
+                              child: Text("Price High-Low"),
+                            ),
+                            DropdownMenuItem(
+                              child: Text("Price Low-High"),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                )
-              ],
+                  )
+                ],
+              ),
             ),
           ),
-        ),
-        SliverList(
-          delegate: SliverChildBuilderDelegate(
-            (context, index) {
-              if (index < _itemLength - 1)
-                return AdminProducts();
-              else
-                return AddItem();
+          FutureBuilder<List<Product>>(
+            future: _productsFuture,
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return SliverFillRemaining(
+                  child: Center(
+                    child: Container(
+                      height: 60,
+                      width: 60,
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+                );
+              } else {
+                products = snapshot.data;
+                return SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      if (index > 0)
+                        return AdminProducts(
+                          product: products[index - 1],
+                        );
+                      else
+                        return GestureDetector(
+                          onTap: () async {
+                            showModalBottomSheet(
+                              context: context,
+                              builder: (_) => AdminAddProductWidget(),
+                              isScrollControlled: true,
+                              useRootNavigator: true,
+                            ).then((value) {
+                              setState(() {
+                                _productsFuture =
+                                    ProductManagementService.getProducts();
+                              });
+                            });
+                          },
+                          excludeFromSemantics: false,
+                          child: AddItem(),
+                        );
+                    },
+                    childCount: products.length + 1,
+                  ),
+                );
+              }
             },
-            childCount: _itemLength,
           ),
-        )
-      ],
+        ],
+      ),
     );
-    ;
   }
 }
 
 class AdminProducts extends StatefulWidget {
+  final Product product;
+
+  AdminProducts({this.product});
+
   @override
   _AdminProductsState createState() => _AdminProductsState();
 }
@@ -119,8 +177,7 @@ class _AdminProductsState extends State<AdminProducts> {
             Expanded(
               child: Center(
                 child: CachedNetworkImage(
-                  imageUrl:
-                      "https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?ixlib=rb-1.2.1&w=1000&q=80",
+                  imageUrl: widget.product.logo,
                   height: 40,
                   width: 40,
                   fit: BoxFit.fill,
@@ -128,10 +185,18 @@ class _AdminProductsState extends State<AdminProducts> {
               ),
             ),
             Expanded(
-              child: Center(child: Text("Price : Rs.80")),
+              flex: 2,
+              child: Center(
+                child: Text(
+                  widget.product.name,
+                  style: TextStyle(color: Colors.blueGrey),
+                ),
+              ),
             ),
             Expanded(
-              child: Center(child: Text("Qty : 20Kg")),
+              flex: 2,
+              child:
+                  Center(child: Text("Rs." + widget.product.price.toString())),
             ),
             PopupMenuButton(
               itemBuilder: (context) => [

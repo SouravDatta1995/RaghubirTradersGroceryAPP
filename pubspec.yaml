@@ -31,6 +31,10 @@ dependencies:
   material_design_icons_flutter: ^4.0.5345
   cached_network_image: ^2.2.0+1
   sms_otp_auto_verify: ^1.2.2
+  image_picker: ^0.6.7+4
+  image_cropper: ^1.2.3
+  http: ^0.12.2
+  shared_preferences: ^0.5.8
 
 dev_dependencies:
   flutter_test:
