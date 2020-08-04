@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:raghuvir_traders/Elements/UserData.dart';
 import 'package:raghuvir_traders/NavigationPages/CustomerHomePage..dart';
 import 'package:raghuvir_traders/Services/UserLoginService.dart';
 
@@ -101,13 +100,10 @@ class _NewUserState extends State<NewUser> {
                         .then((value) {
                       if (value.keys.toList()[0] == "User")
                         Navigator.pushNamedAndRemoveUntil(
-                          context,
-                          CustomerHomePage.id,
-                          ModalRoute.withName(CustomerHomePage.id),
-                          arguments: UserData(
-                              phoneNumber: int.parse(phoneNumber),
-                              name: _fName.trim() + " " + _lName.trim()),
-                        );
+                            context,
+                            CustomerHomePage.id,
+                            ModalRoute.withName(CustomerHomePage.id),
+                            arguments: value.values.toList()[0]);
                       return value;
                     }),
                     builder: (context, snapshot) => Padding(

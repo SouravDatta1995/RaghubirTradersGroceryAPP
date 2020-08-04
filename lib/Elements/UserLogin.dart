@@ -34,6 +34,8 @@ class UserLogin {
           ModalRoute.withName(NewUser.id),
           arguments: phoneNumber,
         );
+      } else {
+        return {"Error:": "Some Error Occurred"};
       }
 
       return value;

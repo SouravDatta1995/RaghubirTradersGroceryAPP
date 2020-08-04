@@ -34,7 +34,10 @@ class UserLoginService {
     //print(response.statusCode.toString());
     if (response.statusCode == 202) {
       return {
-        "User": UserData(name: userName, phoneNumber: int.parse(phoneNumber))
+        "User": UserData(
+            name: userName,
+            phoneNumber: int.parse(phoneNumber),
+            id: int.parse(jsonDecode(response.body).toString()))
       };
     } else {
       return {"Error": "Some Error occurred"};

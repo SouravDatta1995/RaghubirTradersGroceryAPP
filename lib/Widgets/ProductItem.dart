@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -7,7 +9,9 @@ import 'package:raghuvir_traders/Elements/Product.dart';
 class ProductItem extends StatefulWidget {
   final Product product;
 
-  const ProductItem({Key key, this.product}) : super(key: key);
+  final int quantity;
+
+  const ProductItem({Key key, this.product, this.quantity}) : super(key: key);
 
   @override
   _ProductItemState createState() => _ProductItemState();
@@ -18,7 +22,7 @@ class _ProductItemState extends State<ProductItem> {
 
   @override
   void initState() {
-    _itemNum = 0;
+    _itemNum = widget.quantity;
     super.initState();
   }
 
@@ -37,12 +41,14 @@ class _ProductItemState extends State<ProductItem> {
             children: <Widget>[
               Expanded(
                 child: Center(
-                  child: CachedNetworkImage(
-                    imageUrl: widget.product.logo,
-                    height: 100,
-                    width: 100,
-                    fit: BoxFit.fill,
-                  ),
+                  child: widget.product.logo.startsWith("http")
+                      ? CachedNetworkImage(
+                          imageUrl: widget.product.logo,
+                          height: 100,
+                          width: 100,
+                          fit: BoxFit.fill,
+                        )
+                      : Image.memory(base64Decode(widget.product.logo)),
                 ),
               ),
               Expanded(
@@ -98,8 +104,7 @@ class _ProductItemState extends State<ProductItem> {
             onPressed: () {
               setState(() {
                 ++_itemNum;
-
-                AppDataBLoC().cartNumAdd(1);
+                AppDataBLoC.appDataBLoC.cartNumAdd(widget.product, _itemNum);
               });
             },
             child: Text(
@@ -115,7 +120,9 @@ class _ProductItemState extends State<ProductItem> {
                   onTap: () {
                     setState(() {
                       --_itemNum;
-                      AppDataBLoC().cartNumAdd(-1);
+
+                      AppDataBLoC.appDataBLoC
+                          .cartNumAdd(widget.product, _itemNum);
                     });
                   },
                   child: Container(
@@ -141,7 +148,7 @@ class _ProductItemState extends State<ProductItem> {
                 Expanded(
                   child: Center(
                     child: Text(
-                      _itemNum.toString() + " kg",
+                      _itemNum.toString(),
                     ),
                   ),
                 ),
@@ -149,7 +156,8 @@ class _ProductItemState extends State<ProductItem> {
                   onTap: () {
                     setState(() {
                       ++_itemNum;
-                      AppDataBLoC().cartNumAdd(1);
+                      AppDataBLoC.appDataBLoC
+                          .cartNumAdd(widget.product, _itemNum);
                     });
                   },
                   child: Container(

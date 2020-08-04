@@ -25,7 +25,7 @@ class _AdminAddProductWidgetState extends State<AdminAddProductWidget> {
       aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
       maxHeight: 256,
       maxWidth: 256,
-      compressQuality: 80,
+      compressQuality: 60,
       androidUiSettings: AndroidUiSettings(
         statusBarColor: Colors.blueAccent,
         toolbarColor: Colors.blueAccent,
@@ -120,7 +120,9 @@ class _AdminAddProductWidgetState extends State<AdminAddProductWidget> {
                                 )
                               : FutureBuilder(
                                   future: ProductManagementService.addProduct(
-                                          _productName, _productPrice)
+                                          _productName,
+                                          _productPrice,
+                                          _image.path)
                                       .then((value) {
                                     Navigator.popUntil(context,
                                         ModalRoute.withName(AdminHomePage.id));

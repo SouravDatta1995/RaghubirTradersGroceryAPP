@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -176,12 +178,18 @@ class _AdminProductsState extends State<AdminProducts> {
             ),
             Expanded(
               child: Center(
-                child: CachedNetworkImage(
-                  imageUrl: widget.product.logo,
-                  height: 40,
-                  width: 40,
-                  fit: BoxFit.fill,
-                ),
+                child: widget.product.logo.startsWith("http")
+                    ? CachedNetworkImage(
+                        imageUrl: widget.product.logo,
+                        height: 40,
+                        width: 40,
+                        fit: BoxFit.fill,
+                      )
+                    : Image.memory(
+                        base64Decode(widget.product.logo),
+                        height: 40,
+                        width: 40,
+                      ),
               ),
             ),
             Expanded(

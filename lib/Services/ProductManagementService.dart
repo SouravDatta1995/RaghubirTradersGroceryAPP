@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:raghuvir_traders/Elements/Product.dart';
 
@@ -19,21 +20,32 @@ class ProductManagementService {
   }
 
   static Future<String> addProduct(
-      String productName, String productPrice) async {
-    final response = await http.post(
+      String productName, String productPrice, String fileName) async {
+    print("File: " + fileName);
+    String data = "{\"BasePrice\":" +
+        double.parse(productPrice).toString() +
+        ", \"Name\":\"" +
+        productName +
+        "\"}";
+    print(data);
+    var dio = Dio();
+    FormData formData = FormData.fromMap({
+      'productImage': await MultipartFile.fromFile(fileName,
+          filename: productName + ".jpg"),
+      'product': data
+    });
+    print(formData.files[0].value.length.toString());
+    final response = await dio.post(
       'http://15.207.50.9:8082/product/',
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, dynamic>{
-        'BasePrice': double.parse(productPrice),
-        'Name': productName,
-      }),
+      data: formData,
     );
-    if (response.statusCode == 201)
+    if (response.statusCode == 201) {
+      //debugPrint("Product Added");
       return "Product add Successful";
-    else
+    } else {
+      //debugPrint("Product Add unsuccessful");
       return "Error Occurred";
+    }
   }
 
   static Future<List<Product>> findProducts(String searchString) async {

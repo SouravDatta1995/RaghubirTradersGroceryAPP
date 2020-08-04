@@ -35,6 +35,8 @@ dependencies:
   image_cropper: ^1.2.3
   http: ^0.12.2
   shared_preferences: ^0.5.8
+  rxdart: ^0.24.1
+  dio: ^3.0.9
 
 dev_dependencies:
   flutter_test:
