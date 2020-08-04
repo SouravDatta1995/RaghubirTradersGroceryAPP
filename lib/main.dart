@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:raghuvir_traders/NavigationPages/AdminHomePage.dart';
+import 'package:raghuvir_traders/NavigationPages/CartPage.dart';
 import 'package:raghuvir_traders/NavigationPages/CustomerHomePage..dart';
 import 'package:raghuvir_traders/NavigationPages/Login.dart';
 import 'package:raghuvir_traders/NavigationPages/NewUser.dart';
@@ -35,6 +36,7 @@ class MyApp extends StatelessWidget {
         CustomerHomePage.id: (context) => CustomerHomePage(),
         AdminHomePage.id: (context) => AdminHomePage(),
         NewUser.id: (context) => NewUser(),
+        CartPage.id: (context) => CartPage(),
       },
     );
   }

@@ -44,11 +44,16 @@ class _ProductItemState extends State<ProductItem> {
                   child: widget.product.logo.startsWith("http")
                       ? CachedNetworkImage(
                           imageUrl: widget.product.logo,
-                          height: 100,
-                          width: 100,
+                          height: 80,
+                          width: 80,
                           fit: BoxFit.fill,
                         )
-                      : Image.memory(base64Decode(widget.product.logo)),
+                      : Image.memory(
+                          base64Decode(widget.product.logo),
+                          height: 80,
+                          width: 80,
+                          fit: BoxFit.fill,
+                        ),
                 ),
               ),
               Expanded(

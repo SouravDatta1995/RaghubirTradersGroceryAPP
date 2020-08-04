@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:raghuvir_traders/Elements/AppDataBLoC.dart';
 import 'package:raghuvir_traders/Elements/UserData.dart';
 import 'package:raghuvir_traders/NavigationPages/CustomerHomePage..dart';
 import 'package:raghuvir_traders/NavigationPages/NewUser.dart';
@@ -21,6 +22,7 @@ class UserLogin {
       print("UserType:" + _userType);
       if (_userType == "Existing User") {
         setCachePhoneNumber(int.parse(phoneNumber));
+        AppDataBLoC.data = _userData;
         Navigator.pushNamedAndRemoveUntil(
           context,
           CustomerHomePage.id,

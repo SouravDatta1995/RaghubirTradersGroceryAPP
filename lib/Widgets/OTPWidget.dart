@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:raghuvir_traders/Elements/UserLogin.dart';
-import 'package:sms_otp_auto_verify/sms_otp_auto_verify.dart';
+import 'package:sms_autofill/sms_autofill.dart';
 
 class OTPWidget extends StatefulWidget {
   final String phoneNumber;
@@ -15,14 +15,13 @@ class _OTPWidgetState extends State<OTPWidget> {
   String _otpCode;
   bool _isAutoFill, _resendStatus;
   _getSignature() async {
-    String signature = await SmsRetrieved.getAppSignature();
+    String signature = await SmsAutoFill().getAppSignature;
     print("Signature : " + signature);
   }
 
-  _onOtpCallback(String otpCode, bool isAutoFill) {
+  _onOtpCallback(String otpCode) {
     setState(() {
       this._otpCode = otpCode;
-      this._isAutoFill = true;
     });
   }
 
@@ -34,6 +33,12 @@ class _OTPWidgetState extends State<OTPWidget> {
     _resendStatus = false;
     _loginLoad = true;
     _getSignature();
+  }
+
+  @override
+  void dispose() {
+    SmsAutoFill().unregisterListener();
+    super.dispose();
   }
 
   @override
@@ -67,14 +72,30 @@ class _OTPWidgetState extends State<OTPWidget> {
         SizedBox(
           height: 20,
         ),
-        TextFieldPin(
-          codeLength: 4,
-          boxSize: 46,
-          filledAfterTextChange: false,
-          textStyle: TextStyle(fontSize: 16),
-          borderStyle:
-              OutlineInputBorder(borderRadius: BorderRadius.circular(34)),
-          onOtpCallback: (code, isAutoFill) => _onOtpCallback(code, isAutoFill),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: PinFieldAutoFill(
+            codeLength: 4,
+            decoration: CirclePinDecoration(
+              strokeColor: Colors.blueAccent,
+              textStyle: TextStyle(
+                fontSize: 16,
+                color: Colors.black,
+              ),
+            ),
+            autofocus: true,
+            keyboardType: TextInputType.number,
+            currentCode: _otpCode,
+            onCodeSubmitted: (code) {
+              _isAutoFill = true;
+            },
+            onCodeChanged: (code) {
+              _onOtpCallback(code);
+              if (code.length == 4) {
+                FocusScope.of(context).requestFocus(FocusNode());
+              }
+            },
+          ),
         ),
         SizedBox(
           height: 12,

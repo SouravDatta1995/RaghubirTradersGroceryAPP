@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:raghuvir_traders/Elements/AppDataBLoC.dart';
 import 'package:raghuvir_traders/NavigationPages/CustomerHomePage..dart';
 import 'package:raghuvir_traders/Services/UserLoginService.dart';
 
@@ -104,6 +105,7 @@ class _NewUserState extends State<NewUser> {
                             CustomerHomePage.id,
                             ModalRoute.withName(CustomerHomePage.id),
                             arguments: value.values.toList()[0]);
+                      AppDataBLoC.data = value.values.toList()[0];
                       return value;
                     }),
                     builder: (context, snapshot) => Padding(
