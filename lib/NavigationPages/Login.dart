@@ -2,8 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:raghuvir_traders/Elements/UserLogin.dart';
 import 'package:raghuvir_traders/Widgets/AdminLoginWidget.dart';
 import 'package:raghuvir_traders/Widgets/OTPWidget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -11,6 +13,17 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  String _phoneNumber = "";
+  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  Future<int> _cachedPhoneNumber;
+
+  @override
+  void initState() {
+    _cachedPhoneNumber =
+        _prefs.then((value) => value.getInt('UserPhoneNumber') ?? 0);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,22 +45,47 @@ class _LoginState extends State<Login> {
               ),
             ],
           ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Expanded(
-                  flex: 2,
-                  child: Center(child: Text("RAGHUVIR TRADERS")),
-                ),
-                _customerLogin(),
-                Expanded(
-                  child: _adminLogin(),
-                ),
-              ],
-            ),
+          FutureBuilder(
+            future: _cachedPhoneNumber.then((value) {
+              if (value != 0) UserLogin.getUserLogin(context, value.toString());
+              return value;
+            }),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData)
+                return Center(
+                  child: Container(
+                    height: 60,
+                    width: 60,
+                    child: CircularProgressIndicator(),
+                  ),
+                );
+              else if (snapshot.data != 0)
+                return Center(
+                  child: Container(
+                    height: 60,
+                    width: 60,
+                    child: CircularProgressIndicator(),
+                  ),
+                );
+              else
+                return Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      Expanded(
+                        flex: 2,
+                        child: Center(child: Text("RAGHUVIR TRADERS")),
+                      ),
+                      _customerLogin(),
+                      Expanded(
+                        child: _adminLogin(),
+                      ),
+                    ],
+                  ),
+                );
+            },
           ),
         ],
       ),
@@ -72,6 +110,9 @@ class _LoginState extends State<Login> {
                   prefix: Text('+91  '),
                 ),
                 inputFormatters: [LengthLimitingTextInputFormatter(10)],
+                onChanged: (value) {
+                  _phoneNumber = value;
+                },
               ),
               SizedBox(
                 height: 16.0,
@@ -120,7 +161,9 @@ class _LoginState extends State<Login> {
       barrierDismissible: true,
       // false = user must tap button, true = tap outside dialog
       builder: (BuildContext dialogContext) {
-        return OTPWidget();
+        return OTPWidget(
+          phoneNumber: _phoneNumber,
+        );
       },
     );
   }

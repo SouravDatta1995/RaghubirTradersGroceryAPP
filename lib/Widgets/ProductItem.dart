@@ -1,9 +1,18 @@
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:raghuvir_traders/Elements/AppDataBLoC.dart';
+import 'package:raghuvir_traders/Elements/Product.dart';
 
 class ProductItem extends StatefulWidget {
+  final Product product;
+
+  final int quantity;
+
+  const ProductItem({Key key, this.product, this.quantity}) : super(key: key);
+
   @override
   _ProductItemState createState() => _ProductItemState();
 }
@@ -13,7 +22,7 @@ class _ProductItemState extends State<ProductItem> {
 
   @override
   void initState() {
-    _itemNum = 0;
+    _itemNum = widget.quantity;
     super.initState();
   }
 
@@ -32,13 +41,19 @@ class _ProductItemState extends State<ProductItem> {
             children: <Widget>[
               Expanded(
                 child: Center(
-                  child: CachedNetworkImage(
-                    imageUrl:
-                        "https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?ixlib=rb-1.2.1&w=1000&q=80",
-                    height: 100,
-                    width: 100,
-                    fit: BoxFit.fill,
-                  ),
+                  child: widget.product.logo.startsWith("http")
+                      ? CachedNetworkImage(
+                          imageUrl: widget.product.logo,
+                          height: 80,
+                          width: 80,
+                          fit: BoxFit.fill,
+                        )
+                      : Image.memory(
+                          base64Decode(widget.product.logo),
+                          height: 80,
+                          width: 80,
+                          fit: BoxFit.fill,
+                        ),
                 ),
               ),
               Expanded(
@@ -54,7 +69,7 @@ class _ProductItemState extends State<ProductItem> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 4.0, vertical: 12.0),
                         child: Text(
-                          "Apple",
+                          widget.product.name,
                           textAlign: TextAlign.left,
                           style: TextStyle(fontWeight: FontWeight.w600),
                         ),
@@ -64,23 +79,9 @@ class _ProductItemState extends State<ProductItem> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
                             Expanded(
-                              child: Column(
-                                //crossAxisAlignment: CrossAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Text(
-                                    "Rs. 80/Kg",
-                                    style: TextStyle(color: Colors.blueGrey),
-                                  ),
-                                  Text(
-                                    "Rs. 100/Kg",
-                                    style: TextStyle(
-                                        color: Colors.black45,
-                                        decoration: TextDecoration.lineThrough,
-                                        fontSize: 10.0),
-                                  ),
-                                ],
+                              child: Text(
+                                widget.product.price.toString(),
+                                style: TextStyle(color: Colors.blueGrey),
                               ),
                             ),
                             Expanded(child: _itemButton()),
@@ -108,6 +109,7 @@ class _ProductItemState extends State<ProductItem> {
             onPressed: () {
               setState(() {
                 ++_itemNum;
+                AppDataBLoC.appDataBLoC.cartNumAdd(widget.product, _itemNum);
               });
             },
             child: Text(
@@ -123,17 +125,26 @@ class _ProductItemState extends State<ProductItem> {
                   onTap: () {
                     setState(() {
                       --_itemNum;
+
+                      AppDataBLoC.appDataBLoC
+                          .cartNumAdd(widget.product, _itemNum);
                     });
                   },
                   child: Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      border: Border.all(color: Colors.blue),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black87,
+                          blurRadius: 2.0,
+                        ),
+                      ],
+                      color: Colors.white,
                     ),
                     padding: const EdgeInsets.symmetric(horizontal: 4.0),
                     child: Center(
                       child: Icon(
-                        MdiIcons.trashCan,
+                        MdiIcons.minus,
                         color: Colors.red,
                       ),
                     ),
@@ -142,7 +153,7 @@ class _ProductItemState extends State<ProductItem> {
                 Expanded(
                   child: Center(
                     child: Text(
-                      _itemNum.toString() + " kg",
+                      _itemNum.toString(),
                     ),
                   ),
                 ),
@@ -150,17 +161,25 @@ class _ProductItemState extends State<ProductItem> {
                   onTap: () {
                     setState(() {
                       ++_itemNum;
+                      AppDataBLoC.appDataBLoC
+                          .cartNumAdd(widget.product, _itemNum);
                     });
                   },
                   child: Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      border: Border.all(color: Colors.blue),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black87,
+                          blurRadius: 2.0,
+                        ),
+                      ],
+                      color: Colors.white,
                     ),
                     padding: const EdgeInsets.symmetric(horizontal: 4.0),
                     child: Center(
                       child: Icon(
-                        MdiIcons.cartPlus,
+                        MdiIcons.plus,
                         color: Colors.green,
                       ),
                     ),
