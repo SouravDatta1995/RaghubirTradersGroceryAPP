@@ -13,14 +13,34 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
+  List<BasketDetails> _products;
+  @override
+  void initState() {
+    AppDataBLoC.appDataBLoC.cartStream.stream.listen((event) {
+      if (mounted)
+        setState(() {
+          _products = event.basketDetails
+              .where((element) => element.quantity > 0)
+              .toList();
+        });
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _cartAppBar(),
-      drawer: DrawerWidget(),
+      drawer: DrawerWidget(
+        currentPage: "Cart",
+      ),
       body: _cartBody(),
     );
-    ;
   }
 
   Widget _cartAppBar() {
@@ -59,73 +79,70 @@ class _CartPageState extends State<CartPage> {
   }
 
   Widget _cartBody() {
-    return StreamBuilder<Cart>(
-      stream: AppDataBLoC.appDataBLoC.cartStream.stream,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          Cart c = snapshot.data;
-          List<BasketDetails> b =
-              c.basketDetails.where((element) => element.quantity > 0).toList();
-
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Expanded(
-                child: ListView.builder(
-                  itemBuilder: (context, index) {
-                    //print(b[index].product.logo);
-                    return ProductItem(
-                      quantity: b[index].quantity,
-                      product: b[index].product,
-                    );
-                  },
-                  itemCount: b.length,
-                ),
-              ),
-              Container(
-                color: Colors.blueAccent,
-                height: 60,
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Expanded(
-                        child: Text(
-                          "Tap to order",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                      Expanded(
-                        child: Text(
-                          "Rs. " + snapshot.data.totalPrice.toString(),
-                          style: TextStyle(
+    return _products == null
+        ? Center(
+            child: CircularProgressIndicator(),
+          )
+        : _products.length > 0
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Expanded(
+                    child: ListView.builder(
+                      itemBuilder: (context, index) {
+                        //print(b[index].product.logo);
+                        return ProductItem(
+                          product: _products[index].product,
+                        );
+                      },
+                      itemCount: _products.length,
+                    ),
+                  ),
+                  Container(
+                    color: Colors.blueAccent,
+                    height: 60,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Expanded(
+                            child: Text(
+                              "Tap to order",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                          Expanded(
+                            child: StreamBuilder<Cart>(
+                              stream: AppDataBLoC.appDataBLoC.cartStream.stream,
+                              builder: (context, snapshot) => snapshot.hasData
+                                  ? Text(
+                                      "Rs. " +
+                                          snapshot.data.totalPrice.toString(),
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                      textAlign: TextAlign.right,
+                                    )
+                                  : Container(),
+                            ),
+                          ),
+                          Icon(
+                            MdiIcons.arrowRight,
+                            size: 20.0,
                             color: Colors.white,
                           ),
-                          textAlign: TextAlign.right,
-                        ),
+                        ],
                       ),
-                      Icon(
-                        MdiIcons.arrowRight,
-                        size: 20.0,
-                        color: Colors.white,
-                      ),
-                    ],
+                    ),
                   ),
+                ],
+              )
+            : Center(
+                child: Text(
+                  "No items in the Cart",
+                  style: TextStyle(color: Colors.black45),
                 ),
-              ),
-            ],
-          );
-        } else {
-          return Center(
-            child: Container(
-              height: 60,
-              width: 60,
-              child: CircularProgressIndicator(),
-            ),
-          );
-        }
-      },
-    );
+              );
   }
 }

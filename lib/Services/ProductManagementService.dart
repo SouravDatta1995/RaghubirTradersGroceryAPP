@@ -21,20 +21,20 @@ class ProductManagementService {
 
   static Future<String> addProduct(
       String productName, String productPrice, String fileName) async {
-    print("File: " + fileName);
+    //print("File: " + fileName);
     String data = "{\"BasePrice\":" +
         double.parse(productPrice).toString() +
         ", \"Name\":\"" +
         productName +
         "\"}";
-    print(data);
+    //print(data);
     var dio = Dio();
     FormData formData = FormData.fromMap({
       'productImage': await MultipartFile.fromFile(fileName,
           filename: productName + ".jpg"),
       'product': data
     });
-    print(formData.files[0].value.length.toString());
+    //print(formData.files[0].value.length.toString());
     final response = await dio.post(
       'http://15.207.50.9:8082/product/',
       data: formData,
@@ -42,6 +42,34 @@ class ProductManagementService {
     if (response.statusCode == 201) {
       //debugPrint("Product Added");
       return "Product add Successful";
+    } else {
+      //debugPrint("Product Add unsuccessful");
+      return "Error Occurred";
+    }
+  }
+
+  static Future<String> updateProduct(
+      String productName, String productPrice, String fileName) async {
+    String data = "{\"BasePrice\":" +
+        double.parse(productPrice).toString() +
+        ", \"Name\":\"" +
+        productName +
+        "\"}";
+    print("Data: " + data);
+    var dio = Dio();
+    FormData formData = FormData.fromMap({'product': data});
+    if (fileName != "")
+      formData.files.add(MapEntry(
+          'productImage',
+          await MultipartFile.fromFile(fileName,
+              filename: productName + ".jpg")));
+    final response = await dio.put(
+      'http://15.207.50.9:8082/product/',
+      data: formData,
+    );
+    if (response.statusCode == 201) {
+      //debugPrint("Product Added");
+      return "Product Update Successful";
     } else {
       //debugPrint("Product Add unsuccessful");
       return "Error Occurred";

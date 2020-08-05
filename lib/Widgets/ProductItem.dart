@@ -4,25 +4,21 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:raghuvir_traders/Elements/AppDataBLoC.dart';
+import 'package:raghuvir_traders/Elements/Cart.dart';
 import 'package:raghuvir_traders/Elements/Product.dart';
 
 class ProductItem extends StatefulWidget {
   final Product product;
 
-  final int quantity;
-
-  const ProductItem({Key key, this.product, this.quantity}) : super(key: key);
+  const ProductItem({Key key, this.product}) : super(key: key);
 
   @override
   _ProductItemState createState() => _ProductItemState();
 }
 
 class _ProductItemState extends State<ProductItem> {
-  int _itemNum;
-
   @override
   void initState() {
-    _itemNum = widget.quantity;
     super.initState();
   }
 
@@ -84,7 +80,10 @@ class _ProductItemState extends State<ProductItem> {
                                 style: TextStyle(color: Colors.blueGrey),
                               ),
                             ),
-                            Expanded(child: _itemButton()),
+                            Expanded(
+                                child: ProductItemButtonBuilder(
+                              product: widget.product,
+                            )),
                           ],
                         ),
                       ),
@@ -96,6 +95,36 @@ class _ProductItemState extends State<ProductItem> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class ProductItemButtonBuilder extends StatefulWidget {
+  final Product product;
+
+  const ProductItemButtonBuilder({Key key, this.product}) : super(key: key);
+  @override
+  _ProductItemButtonBuilderState createState() =>
+      _ProductItemButtonBuilderState();
+}
+
+class _ProductItemButtonBuilderState extends State<ProductItemButtonBuilder> {
+  int _itemNum;
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<Cart>(
+      stream: AppDataBLoC.appDataBLoC.cartStream,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          BasketDetails b = snapshot.data.basketDetails.singleWhere(
+              (element) =>
+                  element.product.productId == widget.product.productId,
+              orElse: () => null);
+          _itemNum = b != null ? b.quantity : 0;
+          return _itemButton();
+        }
+        return Container();
+      },
     );
   }
 

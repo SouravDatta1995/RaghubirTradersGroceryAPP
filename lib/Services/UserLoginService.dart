@@ -5,11 +5,11 @@ import 'package:raghuvir_traders/Elements/UserData.dart';
 
 class UserLoginService {
   static Future<Map<String, dynamic>> loginUser(String phoneNumber) async {
-    print("Login url: " + "http://15.207.50.9:8082/users/" + phoneNumber);
+    //print("Login url: " + "http://15.207.50.9:8082/users/" + phoneNumber);
     final response = await http.get(
       'http://15.207.50.9:8082/users/' + phoneNumber,
     );
-    print("StatusCode: " + response.statusCode.toString());
+    //print("StatusCode: " + response.statusCode.toString());
     if (response.statusCode == 409) {
       return {"New User": null};
     } else if (response.statusCode == 200) {

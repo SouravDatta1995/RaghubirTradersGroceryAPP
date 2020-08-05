@@ -27,7 +27,6 @@ class UserLogin {
           context,
           CustomerHomePage.id,
           ModalRoute.withName(CustomerHomePage.id),
-          arguments: _userData,
         );
       } else if (_userType == "New User") {
         Navigator.pushNamedAndRemoveUntil(

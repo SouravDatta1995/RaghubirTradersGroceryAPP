@@ -45,7 +45,7 @@ class AppDataBLoC {
       });
       cartNum.add(itemCount);
       cart.totalPrice = totalPrice;
-      cartStream.add(cart);
+      //cartStream.add(cart);
       //print(cart.toJson().toString());
       CartManagementService.updateCart(cart).then((value) {
         cart = value.values.toList()[0];
