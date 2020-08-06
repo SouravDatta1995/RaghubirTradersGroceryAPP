@@ -22,11 +22,13 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
   Future<List<Product>> _products;
   bool _searchFlag = false;
   AppDataBLoC _bLoC;
+  List<String> _categoryList;
   @override
   void initState() {
     _sortVal = 0;
     _categoryVal = 0;
-
+    _products = ProductManagementService.getProducts(_categoryVal, _sortVal);
+    _categoryList = AppDataBLoC.categoryList;
     _searchFlag = false;
     CartManagementService.getLastCart(AppDataBLoC.data.id).then((value) {
       Cart c = value.values.toList()[0];
@@ -52,7 +54,6 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    _products = ProductManagementService.getProducts();
     return Scaffold(
       appBar: _productAppBar(),
       drawer: DrawerWidget(
@@ -66,7 +67,8 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
     return RefreshIndicator(
       onRefresh: () async {
         setState(() {
-          _products = ProductManagementService.getProducts();
+          _products =
+              ProductManagementService.getProducts(_categoryVal, _sortVal);
         });
       },
       displacement: 20.0,
@@ -123,7 +125,8 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
                             onTap: () {
                               setState(() {
                                 _products =
-                                    ProductManagementService.getProducts();
+                                    ProductManagementService.getProducts(
+                                        _categoryVal, _sortVal);
                                 _searchFlag = false;
                               });
                             },
@@ -228,61 +231,6 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
   }
 
   Widget _categoryListWidget() {
-    List<DropdownMenuItem> _categories = [
-      DropdownMenuItem(
-        child: Text("View All"),
-        value: 0,
-      ),
-      DropdownMenuItem(
-        child: Text("Fruits & Vegetables"),
-        value: 1,
-      ),
-      DropdownMenuItem(
-        child: Text("Foodgrains, Oil & Masala "),
-        value: 2,
-      ),
-      DropdownMenuItem(
-        child: Text("Bakery, Cakes & Dairy"),
-        value: 3,
-      ),
-      DropdownMenuItem(
-        child: Text("Bakery, Cakes & Dairy"),
-        value: 3,
-      ),
-      DropdownMenuItem(
-        child: Text("Beverages"),
-        value: 4,
-      ),
-      DropdownMenuItem(
-        child: Text("Snacks & Branded Foods"),
-        value: 5,
-      ),
-      DropdownMenuItem(
-        child: Text("Beauty & Hygiene"),
-        value: 6,
-      ),
-      DropdownMenuItem(
-        child: Text("Cleaning & Household"),
-        value: 7,
-      ),
-      DropdownMenuItem(
-        child: Text("Kitchen, Garden & Pets"),
-        value: 8,
-      ),
-      DropdownMenuItem(
-        child: Text("Eggs,Meat & Fish"),
-        value: 9,
-      ),
-      DropdownMenuItem(
-        child: Text("Gourmet & World Food"),
-        value: 10,
-      ),
-      DropdownMenuItem(
-        child: Text("Baby Care"),
-        value: 11,
-      ),
-    ];
-
     return Expanded(
       flex: 3,
       child: Padding(
@@ -295,9 +243,17 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
             onChanged: (value) {
               setState(() {
                 _categoryVal = value;
+                _products = ProductManagementService.getProducts(
+                    _categoryVal, _sortVal);
               });
             },
-            items: _categories,
+            items: List.generate(
+              _categoryList.length,
+              (index) => DropdownMenuItem(
+                child: Text(_categoryList[index]),
+                value: index,
+              ),
+            ),
           ),
         ),
       ),
@@ -314,6 +270,8 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
             onChanged: (value) {
               setState(() {
                 _sortVal = value;
+                _products = ProductManagementService.getProducts(
+                    _categoryVal, _sortVal);
               });
             },
             icon: Icon(MdiIcons.sortVariant),
@@ -331,15 +289,15 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
               ),
               DropdownMenuItem(
                 child: Text("Z-A"),
-                value: 2,
-              ),
-              DropdownMenuItem(
-                child: Text("Price High-Low"),
                 value: 3,
               ),
               DropdownMenuItem(
-                child: Text("Price Low-High"),
+                child: Text("Price High-Low"),
                 value: 4,
+              ),
+              DropdownMenuItem(
+                child: Text("Price Low-High"),
+                value: 2,
               ),
             ],
           ),

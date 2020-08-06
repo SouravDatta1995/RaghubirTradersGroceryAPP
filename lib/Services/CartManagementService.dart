@@ -18,12 +18,16 @@ class CartManagementService {
     print("getCart Called");
     final response =
         await http.get('http://15.207.50.9:8082/basket/GetLastBasket/$userId');
+    print(response.statusCode.toString());
     if (response.statusCode == 200)
       return {"Cart Details": Cart.fromJson(json.decode(response.body))};
     else if (response.statusCode == 409)
-      return {"New Cart": Cart(basketId: 0)};
-    else
+      return {
+        "New Cart": Cart(basketId: 0, basketDetails: List<BasketDetails>())
+      };
+    else {
       return {"Error": "Some Error Occurred"};
+    }
   }
 
   static Future<Map<String, dynamic>> updateCart(Cart cart) async {

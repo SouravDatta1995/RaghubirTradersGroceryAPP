@@ -22,6 +22,8 @@ class _CartPageState extends State<CartPage> {
           _products = event.basketDetails
               .where((element) => element.quantity > 0)
               .toList();
+          _products.sort(
+              (a, b) => a.product.productId.compareTo(b.product.productId));
         });
     });
     super.initState();

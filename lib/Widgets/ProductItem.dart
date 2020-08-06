@@ -61,23 +61,39 @@ class _ProductItemState extends State<ProductItem> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
                       Expanded(
-                          child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 4.0, vertical: 12.0),
-                        child: Text(
-                          widget.product.name,
-                          textAlign: TextAlign.left,
-                          style: TextStyle(fontWeight: FontWeight.w600),
+                        flex: 3,
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 12.0),
+                          child: Text(
+                            widget.product.name,
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600, fontSize: 18),
+                          ),
                         ),
-                      )),
+                      ),
                       Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 4.0),
+                          child: Text(
+                            AppDataBLoC.categoryList[
+                                int.parse(widget.product.category)],
+                            textAlign: TextAlign.left,
+                            style: TextStyle(color: Colors.black45),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 2,
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
                             Expanded(
                               child: Text(
-                                widget.product.price.toString(),
-                                style: TextStyle(color: Colors.blueGrey),
+                                "Rs. " + widget.product.price.toString(),
+                                style: TextStyle(
+                                    color: Colors.blueGrey,
+                                    fontWeight: FontWeight.w500),
                               ),
                             ),
                             Expanded(
@@ -116,7 +132,7 @@ class _ProductItemButtonBuilderState extends State<ProductItemButtonBuilder> {
       stream: AppDataBLoC.appDataBLoC.cartStream,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          BasketDetails b = snapshot.data.basketDetails.singleWhere(
+          BasketDetails b = snapshot.data.basketDetails.firstWhere(
               (element) =>
                   element.product.productId == widget.product.productId,
               orElse: () => null);

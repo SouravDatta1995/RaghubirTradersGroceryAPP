@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:raghuvir_traders/Elements/AppDataBLoC.dart';
 import 'package:raghuvir_traders/Elements/Product.dart';
 import 'package:raghuvir_traders/Services/ProductManagementService.dart';
 import 'package:raghuvir_traders/Widgets/AdminAddProductWidget.dart';
@@ -17,21 +18,24 @@ class _AdminProductPageState extends State<AdminProductPage> {
   List<Product> products = [];
   Future<List<Product>> _productsFuture;
   int _sortVal, _categoryVal;
+  List<String> _categoryList;
   @override
   void initState() {
-    _productsFuture = ProductManagementService.getProducts();
     _sortVal = 0;
     _categoryVal = 0;
+    _categoryList = AppDataBLoC.categoryList;
+    _productsFuture =
+        ProductManagementService.getProducts(_categoryVal, _sortVal);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    _productsFuture =
+        ProductManagementService.getProducts(_categoryVal, _sortVal);
     return RefreshIndicator(
       onRefresh: () async {
-        setState(() {
-          _productsFuture = ProductManagementService.getProducts();
-        });
+        setState(() {});
       },
       child: CustomScrollView(
         slivers: <Widget>[
@@ -57,60 +61,13 @@ class _AdminProductPageState extends State<AdminProductPage> {
                           value: _categoryVal,
                           style: TextStyle(fontSize: 14.0, color: Colors.black),
                           isExpanded: true,
-                          items: [
-                            DropdownMenuItem(
-                              child: Text("View All"),
-                              value: 0,
+                          items: List.generate(
+                            _categoryList.length,
+                            (index) => DropdownMenuItem(
+                              child: Text(_categoryList[index]),
+                              value: index,
                             ),
-                            DropdownMenuItem(
-                              child: Text("Fruits & Vegetables"),
-                              value: 1,
-                            ),
-                            DropdownMenuItem(
-                              child: Text("Foodgrains, Oil & Masala "),
-                              value: 2,
-                            ),
-                            DropdownMenuItem(
-                              child: Text("Bakery, Cakes & Dairy"),
-                              value: 3,
-                            ),
-                            DropdownMenuItem(
-                              child: Text("Bakery, Cakes & Dairy"),
-                              value: 3,
-                            ),
-                            DropdownMenuItem(
-                              child: Text("Beverages"),
-                              value: 4,
-                            ),
-                            DropdownMenuItem(
-                              child: Text("Snacks & Branded Foods"),
-                              value: 5,
-                            ),
-                            DropdownMenuItem(
-                              child: Text("Beauty & Hygiene"),
-                              value: 6,
-                            ),
-                            DropdownMenuItem(
-                              child: Text("Cleaning & Household"),
-                              value: 7,
-                            ),
-                            DropdownMenuItem(
-                              child: Text("Kitchen, Garden & Pets"),
-                              value: 8,
-                            ),
-                            DropdownMenuItem(
-                              child: Text("Eggs,Meat & Fish"),
-                              value: 9,
-                            ),
-                            DropdownMenuItem(
-                              child: Text("Gourmet & World Food"),
-                              value: 10,
-                            ),
-                            DropdownMenuItem(
-                              child: Text("Baby Care"),
-                              value: 11,
-                            ),
-                          ],
+                          ),
                         ),
                       ),
                     ),
@@ -141,15 +98,15 @@ class _AdminProductPageState extends State<AdminProductPage> {
                             ),
                             DropdownMenuItem(
                               child: Text("Z-A"),
-                              value: 2,
-                            ),
-                            DropdownMenuItem(
-                              child: Text("Price High-Low"),
                               value: 3,
                             ),
                             DropdownMenuItem(
-                              child: Text("Price Low-High"),
+                              child: Text("Price High-Low"),
                               value: 4,
+                            ),
+                            DropdownMenuItem(
+                              child: Text("Price Low-High"),
+                              value: 2,
                             ),
                           ],
                         ),
@@ -192,7 +149,8 @@ class _AdminProductPageState extends State<AdminProductPage> {
                             ).then((value) {
                               setState(() {
                                 _productsFuture =
-                                    ProductManagementService.getProducts();
+                                    ProductManagementService.getProducts(
+                                        _categoryVal, _sortVal);
                               });
                             });
                           },
@@ -279,8 +237,13 @@ class _AdminProductPageState extends State<AdminProductPage> {
                     isScrollControlled: true,
                   ).then((value) {
                     setState(() {
-                      _productsFuture = ProductManagementService.getProducts();
+                      ProductManagementService.getProducts(
+                          _categoryVal, _sortVal);
                     });
+                  });
+                else if (value == 1)
+                  ProductManagementService.deleteProduct(product).then((value) {
+                    setState(() {});
                   });
               },
             ),

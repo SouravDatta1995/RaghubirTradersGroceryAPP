@@ -62,13 +62,12 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                 ListTile(
                   title: Text("Products"),
                   onTap: () {
-                    if (widget.currentPage == "Products")
-                      Navigator.pop(context);
-                    else
+                    Navigator.pop(context);
+                    if (widget.currentPage != "Products")
                       Navigator.pushNamedAndRemoveUntil(
                         context,
                         CustomerHomePage.id,
-                        ModalRoute.withName(CustomerHomePage.id),
+                        (route) => false,
                       );
                   },
                 ),
@@ -76,10 +75,10 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   title: Text("Cart"),
                   onTap: () {
                     setState(() {
-                      if (widget.currentPage == "Cart")
-                        Navigator.pop(context);
-                      else
+                      Navigator.pop(context);
+                      if (widget.currentPage != "Cart") {
                         Navigator.pushNamed(context, CartPage.id);
+                      }
                     });
                   },
                 ),
@@ -105,7 +104,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
 //              AppDataBLoC.appDataBLoC.dispose();
                 UserLogin.setCachePhoneNumber(0);
                 Navigator.pushNamedAndRemoveUntil(
-                    context, '/', ModalRoute.withName("/"));
+                    context, '/', (route) => false);
               },
               child: Container(
                 color: Colors.blueAccent,

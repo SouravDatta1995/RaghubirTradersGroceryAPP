@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:raghuvir_traders/Elements/AppDataBLoC.dart';
 import 'package:raghuvir_traders/NavigationPages/AdminHomePage.dart';
 import 'package:raghuvir_traders/Services/ProductManagementService.dart';
 
@@ -16,6 +17,8 @@ class _AdminAddProductWidgetState extends State<AdminAddProductWidget> {
   final picker = ImagePicker();
   String _productName, _productPrice;
   bool _saveButtonState = false;
+  int _categoryVal;
+  List<String> _categoryList;
   Future getImage() async {
     final pickedFile = await picker.getImage(
       source: ImageSource.gallery,
@@ -33,6 +36,13 @@ class _AdminAddProductWidgetState extends State<AdminAddProductWidget> {
       ),
     );
     setState(() {});
+  }
+
+  @override
+  void initState() {
+    _categoryList = AppDataBLoC.categoryList.sublist(1);
+    _categoryVal = 1;
+    super.initState();
   }
 
   @override
@@ -94,6 +104,31 @@ class _AdminAddProductWidgetState extends State<AdminAddProductWidget> {
                   SizedBox(
                     height: 12.0,
                   ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton(
+                        onChanged: (value) {
+                          setState(() {
+                            _categoryVal = value;
+                          });
+                        },
+                        value: _categoryVal,
+                        style: TextStyle(fontSize: 14.0, color: Colors.black),
+                        isExpanded: true,
+                        items: List.generate(
+                          _categoryList.length,
+                          (index) => DropdownMenuItem(
+                            child: Text(_categoryList[index]),
+                            value: index + 1,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 12.0,
+                  ),
                   ButtonBar(
                     alignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -120,10 +155,11 @@ class _AdminAddProductWidgetState extends State<AdminAddProductWidget> {
                                 )
                               : FutureBuilder(
                                   future: ProductManagementService.addProduct(
-                                          _productName,
-                                          _productPrice,
-                                          _image.path)
-                                      .then((value) {
+                                    _productName,
+                                    _productPrice,
+                                    _image.path,
+                                    _categoryVal.toString(),
+                                  ).then((value) {
                                     Navigator.popUntil(context,
                                         ModalRoute.withName(AdminHomePage.id));
                                   }),

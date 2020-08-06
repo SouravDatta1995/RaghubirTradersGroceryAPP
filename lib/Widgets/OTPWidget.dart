@@ -162,7 +162,9 @@ class _OTPWidgetState extends State<OTPWidget> {
             color: Colors.blueAccent,
             child: _loginLoad
                 ? FutureBuilder<Map<String, dynamic>>(
-                    future: UserLogin.getUserLogin(context, widget.phoneNumber),
+                    //TODO : Update to getUserLoginViaOtp for otp validation
+                    future: UserLogin.getUserLoginViaOtp(
+                        context, widget.phoneNumber, _otpCode),
                     builder: (context, snapshot) {
                       return Container(
                         height: 15.0,
