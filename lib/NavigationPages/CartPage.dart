@@ -3,8 +3,8 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:raghuvir_traders/Elements/AppDataBLoC.dart';
 import 'package:raghuvir_traders/Elements/Cart.dart';
 import 'package:raghuvir_traders/NavigationPages/CustomerHomePage..dart';
+import 'package:raghuvir_traders/Widgets/CartItem.dart';
 import 'package:raghuvir_traders/Widgets/DrawerWidget.dart';
-import 'package:raghuvir_traders/Widgets/ProductItem.dart';
 
 class CartPage extends StatefulWidget {
   static String id = "CartPage";
@@ -93,7 +93,7 @@ class _CartPageState extends State<CartPage> {
                     child: ListView.builder(
                       itemBuilder: (context, index) {
                         //print(b[index].product.logo);
-                        return ProductItem(
+                        return CartItem(
                           product: _products[index].product,
                         );
                       },

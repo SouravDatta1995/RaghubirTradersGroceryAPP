@@ -175,13 +175,17 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
                       ),
                     ),
                     Positioned(
-                      left: 20.0,
+                      left: 15.0,
                       child: StreamBuilder(
                         stream: AppDataBLoC.appDataBLoC.cartNum.stream,
                         builder: (context, snapshot) => snapshot.data != 0
                             ? Container(
-                                height: 12.0,
-                                width: 12.0,
+                                height: 14.0,
+                                width: 14.0,
+                                child: Center(
+                                  child: Text(snapshot.data.toString(),
+                                      style: TextStyle(fontSize: 10.0)),
+                                ),
                                 decoration: BoxDecoration(
                                     shape: BoxShape.circle, color: Colors.red),
                               )
@@ -213,7 +217,7 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
                     product: snapshot.data[index],
                   );
                 },
-                childCount: snapshot.data.length,
+                childCount: snapshot.data.length ?? 0,
               ),
             );
           } else {

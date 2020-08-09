@@ -12,7 +12,7 @@ class ProductManagementService {
     else if (category != 0)
       url += "?category=$category";
     else if (order != 0) url += "?orderBy=$order";
-    print(url);
+    // print(url);
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
