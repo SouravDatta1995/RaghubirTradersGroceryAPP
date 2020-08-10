@@ -3,9 +3,11 @@ import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:raghuvir_traders/Elements/AppDataBLoC.dart';
 import 'package:raghuvir_traders/Elements/Product.dart';
 import 'package:raghuvir_traders/Services/ProductManagementService.dart';
 import 'package:raghuvir_traders/Widgets/AdminAddProductWidget.dart';
+import 'package:raghuvir_traders/Widgets/AdminUpdateProductWidget.dart';
 
 class AdminProductPage extends StatefulWidget {
   @override
@@ -15,21 +17,25 @@ class AdminProductPage extends StatefulWidget {
 class _AdminProductPageState extends State<AdminProductPage> {
   List<Product> products = [];
   Future<List<Product>> _productsFuture;
-  int _itemLength;
-
+  int _sortVal, _categoryVal;
+  List<String> _categoryList;
   @override
   void initState() {
-    _productsFuture = ProductManagementService.getProducts();
+    _sortVal = 0;
+    _categoryVal = 0;
+    _categoryList = AppDataBLoC.categoryList;
+    _productsFuture =
+        ProductManagementService.getProducts(_categoryVal, _sortVal);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    _productsFuture =
+        ProductManagementService.getProducts(_categoryVal, _sortVal);
     return RefreshIndicator(
       onRefresh: () async {
-        setState(() {
-          _productsFuture = ProductManagementService.getProducts();
-        });
+        setState(() {});
       },
       child: CustomScrollView(
         slivers: <Widget>[
@@ -42,54 +48,71 @@ class _AdminProductPageState extends State<AdminProductPage> {
               child: Row(
                 children: <Widget>[
                   Expanded(
+                    flex: 3,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton(
-                          onChanged: (value) {},
+                          onChanged: (value) {
+                            setState(() {
+                              _categoryVal = value;
+                            });
+                          },
+                          value: _categoryVal,
+                          style: TextStyle(fontSize: 14.0, color: Colors.black),
+                          isExpanded: true,
+                          items: List.generate(
+                            _categoryList.length,
+                            (index) => DropdownMenuItem(
+                              child: Text(_categoryList[index]),
+                              value: index,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton(
+                          onChanged: (value) {
+                            setState(() {
+                              _sortVal = value;
+                            });
+                          },
+                          icon: Icon(MdiIcons.sortVariant),
+                          value: _sortVal,
+                          style: TextStyle(fontSize: 14.0, color: Colors.black),
+                          isExpanded: true,
                           items: [
                             DropdownMenuItem(
-                              child: Text("Vegetables"),
+                              child: Text("No Sort"),
+                              value: 0,
                             ),
                             DropdownMenuItem(
-                              child: Text("Fruits"),
+                              child: Text("A-Z"),
+                              value: 1,
                             ),
                             DropdownMenuItem(
-                              child: Text("Spices"),
+                              child: Text("Z-A"),
+                              value: 3,
+                            ),
+                            DropdownMenuItem(
+                              child: Text("Price High-Low"),
+                              value: 4,
+                            ),
+                            DropdownMenuItem(
+                              child: Text("Price Low-High"),
+                              value: 2,
                             ),
                           ],
                         ),
                       ),
                     ),
                   ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton(
-                          onChanged: (value) {},
-                          icon: Icon(MdiIcons.sortVariant),
-                          items: [
-                            DropdownMenuItem(
-                              child: Text("Popularity"),
-                            ),
-                            DropdownMenuItem(
-                              child: Text("A-Z"),
-                            ),
-                            DropdownMenuItem(
-                              child: Text("Z-A"),
-                            ),
-                            DropdownMenuItem(
-                              child: Text("Price High-Low"),
-                            ),
-                            DropdownMenuItem(
-                              child: Text("Price Low-High"),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  )
                 ],
               ),
             ),
@@ -113,7 +136,7 @@ class _AdminProductPageState extends State<AdminProductPage> {
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
                       if (index > 0)
-                        return AdminProducts(
+                        return _adminProducts(
                           product: products[index - 1],
                         );
                       else
@@ -123,11 +146,11 @@ class _AdminProductPageState extends State<AdminProductPage> {
                               context: context,
                               builder: (_) => AdminAddProductWidget(),
                               isScrollControlled: true,
-                              useRootNavigator: true,
                             ).then((value) {
                               setState(() {
                                 _productsFuture =
-                                    ProductManagementService.getProducts();
+                                    ProductManagementService.getProducts(
+                                        _categoryVal, _sortVal);
                               });
                             });
                           },
@@ -145,20 +168,8 @@ class _AdminProductPageState extends State<AdminProductPage> {
       ),
     );
   }
-}
 
-class AdminProducts extends StatefulWidget {
-  final Product product;
-
-  AdminProducts({this.product});
-
-  @override
-  _AdminProductsState createState() => _AdminProductsState();
-}
-
-class _AdminProductsState extends State<AdminProducts> {
-  @override
-  Widget build(BuildContext context) {
+  Widget _adminProducts({Product product}) {
     return Card(
       elevation: 3.0,
       child: Container(
@@ -178,15 +189,15 @@ class _AdminProductsState extends State<AdminProducts> {
             ),
             Expanded(
               child: Center(
-                child: widget.product.logo.startsWith("http")
+                child: product.logo.startsWith("http")
                     ? CachedNetworkImage(
-                        imageUrl: widget.product.logo,
+                        imageUrl: product.logo,
                         height: 40,
                         width: 40,
                         fit: BoxFit.fill,
                       )
                     : Image.memory(
-                        base64Decode(widget.product.logo),
+                        base64Decode(product.logo),
                         height: 40,
                         width: 40,
                       ),
@@ -196,29 +207,46 @@ class _AdminProductsState extends State<AdminProducts> {
               flex: 2,
               child: Center(
                 child: Text(
-                  widget.product.name,
+                  product.name,
                   style: TextStyle(color: Colors.blueGrey),
                 ),
               ),
             ),
             Expanded(
               flex: 2,
-              child:
-                  Center(child: Text("Rs." + widget.product.price.toString())),
+              child: Center(child: Text("Rs." + product.price.toString())),
             ),
             PopupMenuButton(
               itemBuilder: (context) => [
                 PopupMenuItem(
+                  value: 0,
                   child: Text("EDIT"),
                 ),
                 PopupMenuItem(
+                  value: 1,
                   child: Text("DELETE"),
                 ),
-                PopupMenuItem(
-                  child: Text("DISABLE"),
-                ),
               ],
-            )
+              onSelected: (value) {
+                if (value == 0)
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (_) => AdminUpdateProductWidget(
+                      product: product,
+                    ),
+                    isScrollControlled: true,
+                  ).then((value) {
+                    setState(() {
+                      ProductManagementService.getProducts(
+                          _categoryVal, _sortVal);
+                    });
+                  });
+                else if (value == 1)
+                  ProductManagementService.deleteProduct(product).then((value) {
+                    setState(() {});
+                  });
+              },
+            ),
           ],
         ),
       ),

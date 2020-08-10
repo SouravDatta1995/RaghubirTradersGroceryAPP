@@ -23,12 +23,36 @@ class UserLogin {
       if (_userType == "Existing User") {
         setCachePhoneNumber(int.parse(phoneNumber));
         AppDataBLoC.data = _userData;
+        Navigator.pop(context);
+        Navigator.pushNamedAndRemoveUntil(
+            context, CustomerHomePage.id, (route) => false);
+      } else if (_userType == "New User") {
         Navigator.pushNamedAndRemoveUntil(
           context,
-          CustomerHomePage.id,
-          ModalRoute.withName(CustomerHomePage.id),
-          arguments: _userData,
+          NewUser.id,
+          ModalRoute.withName(NewUser.id),
+          arguments: phoneNumber,
         );
+      } else {
+        return {"Error:": "Some Error Occurred"};
+      }
+
+      return value;
+    });
+  }
+
+  static Future<Map<String, dynamic>> getUserLoginViaOtp(
+      BuildContext context, String phoneNumber, String otp) {
+    return UserLoginService.validateOtp(phoneNumber, otp).then((value) {
+      String _userType = value.keys.toList()[0];
+      UserData _userData = value.values.toList()[0];
+      print("UserType:" + _userType);
+      if (_userType == "Existing User") {
+        setCachePhoneNumber(int.parse(phoneNumber));
+        AppDataBLoC.data = _userData;
+        Navigator.pop(context);
+        Navigator.pushNamedAndRemoveUntil(
+            context, CustomerHomePage.id, (route) => false);
       } else if (_userType == "New User") {
         Navigator.pushNamedAndRemoveUntil(
           context,

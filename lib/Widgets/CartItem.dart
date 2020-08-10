@@ -7,16 +7,16 @@ import 'package:raghuvir_traders/Elements/AppDataBLoC.dart';
 import 'package:raghuvir_traders/Elements/Cart.dart';
 import 'package:raghuvir_traders/Elements/Product.dart';
 
-class ProductItem extends StatefulWidget {
+class CartItem extends StatefulWidget {
   final Product product;
 
-  const ProductItem({Key key, this.product}) : super(key: key);
+  const CartItem({Key key, this.product}) : super(key: key);
 
   @override
-  _ProductItemState createState() => _ProductItemState();
+  _CartItemState createState() => _CartItemState();
 }
 
-class _ProductItemState extends State<ProductItem> {
+class _CartItemState extends State<CartItem> {
   @override
   void initState() {
     super.initState();
@@ -26,7 +26,6 @@ class _ProductItemState extends State<ProductItem> {
   Widget build(BuildContext context) {
     return Card(
       elevation: 3.0,
-      //contentPadding: const EdgeInsets.all(8.0),
       child: Container(
         height: 120,
         child: Padding(
@@ -146,22 +145,7 @@ class _ProductItemButtonBuilderState extends State<ProductItemButtonBuilder> {
 
   Widget _itemButton() {
     return _itemNum == 0
-        ? RaisedButton(
-            color: Colors.blueAccent,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(4.0),
-            ),
-            onPressed: () {
-              setState(() {
-                ++_itemNum;
-                AppDataBLoC.appDataBLoC.cartNumAdd(widget.product, _itemNum);
-              });
-            },
-            child: Text(
-              "Add",
-              style: TextStyle(color: Colors.white),
-            ),
-          )
+        ? Container()
         : Container(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,

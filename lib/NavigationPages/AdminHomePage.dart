@@ -37,6 +37,14 @@ class _AdminHomePageState extends State<AdminHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: GestureDetector(
+          onTap: () => Navigator.pushNamedAndRemoveUntil(
+              context, "/", ModalRoute.withName("/")),
+          child: Icon(
+            MdiIcons.arrowLeft,
+            color: Colors.white,
+          ),
+        ),
         title: Text("Welcome <Admin>"),
       ),
       body: _bodyWidgets[0],

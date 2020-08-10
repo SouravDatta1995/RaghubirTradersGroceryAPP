@@ -4,7 +4,6 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:raghuvir_traders/Elements/AppDataBLoC.dart';
 import 'package:raghuvir_traders/Elements/Cart.dart';
 import 'package:raghuvir_traders/Elements/Product.dart';
-import 'package:raghuvir_traders/Elements/UserData.dart';
 import 'package:raghuvir_traders/Services/CartManagementService.dart';
 import 'package:raghuvir_traders/Services/ProductManagementService.dart';
 import 'package:raghuvir_traders/Widgets/DrawerWidget.dart';
@@ -21,19 +20,19 @@ class CustomerHomePage extends StatefulWidget {
 class _CustomerHomePageState extends State<CustomerHomePage> {
   int _sortVal, _categoryVal;
   Future<List<Product>> _products;
-  UserData _user;
   bool _searchFlag = false;
-  List<AppBar> _appBarList = [];
   AppDataBLoC _bLoC;
+  List<String> _categoryList;
   @override
   void initState() {
     _sortVal = 0;
     _categoryVal = 0;
-    _products = ProductManagementService.getProducts();
+    _products = ProductManagementService.getProducts(_categoryVal, _sortVal);
+    _categoryList = AppDataBLoC.categoryList;
     _searchFlag = false;
     CartManagementService.getLastCart(AppDataBLoC.data.id).then((value) {
       Cart c = value.values.toList()[0];
-      _bLoC = AppDataBLoC(_user, c.basketId);
+      _bLoC = AppDataBLoC(AppDataBLoC.data, c.basketId);
       int count = 0;
       AppDataBLoC.cart = c;
       AppDataBLoC.appDataBLoC.cartStream.add(c);
@@ -55,11 +54,11 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    _user = ModalRoute.of(context).settings.arguments;
-
     return Scaffold(
       appBar: _productAppBar(),
-      drawer: DrawerWidget(),
+      drawer: DrawerWidget(
+        currentPage: "Products",
+      ),
       body: _productBody(),
     );
   }
@@ -68,7 +67,8 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
     return RefreshIndicator(
       onRefresh: () async {
         setState(() {
-          _products = ProductManagementService.getProducts();
+          _products =
+              ProductManagementService.getProducts(_categoryVal, _sortVal);
         });
       },
       displacement: 20.0,
@@ -81,6 +81,7 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
             primary: false,
             title: Center(
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   _categoryListWidget(),
                   _sortListWidget(),
@@ -102,6 +103,7 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
       title: Center(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Expanded(
               child: Center(
@@ -123,7 +125,8 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
                             onTap: () {
                               setState(() {
                                 _products =
-                                    ProductManagementService.getProducts();
+                                    ProductManagementService.getProducts(
+                                        _categoryVal, _sortVal);
                                 _searchFlag = false;
                               });
                             },
@@ -145,13 +148,12 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
               onTap: () {
                 setState(() {
                   _searchFlag = true;
-                  _appBarList[0] = _productAppBar();
                 });
               },
               child: _searchFlag
                   ? Container()
                   : Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      padding: const EdgeInsets.all(8.0),
                       child: Icon(
                         MdiIcons.magnify,
                         color: Colors.black,
@@ -161,33 +163,40 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
             GestureDetector(
               excludeFromSemantics: false,
               onTap: () => Navigator.pushNamed(context, CartPage.id),
-              child: Stack(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                    child: Icon(
-                      MdiIcons.cart,
-                      color: Colors.black,
+              child: Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Stack(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Icon(
+                        MdiIcons.cart,
+                        color: Colors.black,
+                      ),
                     ),
-                  ),
-                  Positioned(
-                    left: 20.0,
-                    child: StreamBuilder(
-                      stream: AppDataBLoC.appDataBLoC.cartNum.stream,
-                      builder: (context, snapshot) => snapshot.data != 0
-                          ? Container(
-                              height: 12.0,
-                              width: 12.0,
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.circle, color: Colors.blue),
-                            )
-                          : Container(
-                              height: 0,
-                              width: 0,
-                            ),
+                    Positioned(
+                      left: 15.0,
+                      child: StreamBuilder(
+                        stream: AppDataBLoC.appDataBLoC.cartNum.stream,
+                        builder: (context, snapshot) => snapshot.data != 0
+                            ? Container(
+                                height: 14.0,
+                                width: 14.0,
+                                child: Center(
+                                  child: Text(snapshot.data.toString(),
+                                      style: TextStyle(fontSize: 10.0)),
+                                ),
+                                decoration: BoxDecoration(
+                                    shape: BoxShape.circle, color: Colors.red),
+                              )
+                            : Container(
+                                height: 0,
+                                width: 0,
+                              ),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ],
@@ -201,31 +210,14 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
         future: _products,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return StreamBuilder<Cart>(
-              stream: AppDataBLoC.appDataBLoC.cartStream.stream,
-              builder: (context, snapshot2) => SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    if (snapshot2.hasData) {
-                      BasketDetails b = BasketDetails();
-                      if (AppDataBLoC.basketId != 0) {
-                        b = snapshot2.data.basketDetails.firstWhere(
-                            (element) =>
-                                element.product.productId ==
-                                snapshot.data[index].productId,
-                            orElse: () => null);
-                      }
-
-                      int quantity = b != null ? b.quantity : 0;
-                      return ProductItem(
-                        product: snapshot.data[index],
-                        quantity: quantity ?? 0,
-                      );
-                    } else
-                      return Container();
-                  },
-                  childCount: snapshot.data.length,
-                ),
+            return SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  return ProductItem(
+                    product: snapshot.data[index],
+                  );
+                },
+                childCount: snapshot.data.length ?? 0,
               ),
             );
           } else {
@@ -244,34 +236,28 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
 
   Widget _categoryListWidget() {
     return Expanded(
+      flex: 3,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: DropdownButtonHideUnderline(
           child: DropdownButton(
+            style: TextStyle(fontSize: 14.0, color: Colors.black),
+            isExpanded: true,
             value: _categoryVal,
             onChanged: (value) {
               setState(() {
                 _categoryVal = value;
+                _products = ProductManagementService.getProducts(
+                    _categoryVal, _sortVal);
               });
             },
-            items: [
-              DropdownMenuItem(
-                child: Text("No Category"),
-                value: 0,
+            items: List.generate(
+              _categoryList.length,
+              (index) => DropdownMenuItem(
+                child: Text(_categoryList[index]),
+                value: index,
               ),
-              DropdownMenuItem(
-                child: Text("Vegetables"),
-                value: 1,
-              ),
-              DropdownMenuItem(
-                child: Text("Fruits"),
-                value: 2,
-              ),
-              DropdownMenuItem(
-                child: Text("Spices"),
-                value: 3,
-              ),
-            ],
+            ),
           ),
         ),
       ),
@@ -280,6 +266,7 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
 
   Widget _sortListWidget() {
     return Expanded(
+      flex: 2,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: DropdownButtonHideUnderline(
@@ -287,10 +274,14 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
             onChanged: (value) {
               setState(() {
                 _sortVal = value;
+                _products = ProductManagementService.getProducts(
+                    _categoryVal, _sortVal);
               });
             },
             icon: Icon(MdiIcons.sortVariant),
             value: _sortVal,
+            style: TextStyle(fontSize: 14.0, color: Colors.black),
+            isExpanded: true,
             items: [
               DropdownMenuItem(
                 child: Text("No Sort"),
@@ -302,15 +293,15 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
               ),
               DropdownMenuItem(
                 child: Text("Z-A"),
-                value: 2,
-              ),
-              DropdownMenuItem(
-                child: Text("Price High-Low"),
                 value: 3,
               ),
               DropdownMenuItem(
-                child: Text("Price Low-High"),
+                child: Text("Price High-Low"),
                 value: 4,
+              ),
+              DropdownMenuItem(
+                child: Text("Price Low-High"),
+                value: 2,
               ),
             ],
           ),

@@ -1,18 +1,27 @@
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:raghuvir_traders/Elements/AppDataBLoC.dart';
+import 'package:raghuvir_traders/Elements/Product.dart';
 import 'package:raghuvir_traders/NavigationPages/AdminHomePage.dart';
 import 'package:raghuvir_traders/Services/ProductManagementService.dart';
 
-class AdminAddProductWidget extends StatefulWidget {
+class AdminUpdateProductWidget extends StatefulWidget {
+  final Product product;
+
+  const AdminUpdateProductWidget({Key key, this.product}) : super(key: key);
+
   @override
-  _AdminAddProductWidgetState createState() => _AdminAddProductWidgetState();
+  _AdminUpdateProductWidgetState createState() =>
+      _AdminUpdateProductWidgetState();
 }
 
-class _AdminAddProductWidgetState extends State<AdminAddProductWidget> {
+class _AdminUpdateProductWidgetState extends State<AdminUpdateProductWidget> {
   File _image;
   final picker = ImagePicker();
   String _productName, _productPrice;
@@ -40,8 +49,10 @@ class _AdminAddProductWidgetState extends State<AdminAddProductWidget> {
 
   @override
   void initState() {
+    _productName = widget.product.name;
+    _productPrice = widget.product.price.toString();
     _categoryList = AppDataBLoC.categoryList.sublist(1);
-    _categoryVal = 1;
+    _categoryVal = int.parse(widget.product.category);
     super.initState();
   }
 
@@ -76,7 +87,26 @@ class _AdminAddProductWidgetState extends State<AdminAddProductWidget> {
                             getImage();
                           },
                           child: _image == null
-                              ? Icon(Icons.add_a_photo)
+                              ? Stack(
+                                  children: [
+                                    widget.product.logo.startsWith("http")
+                                        ? CachedNetworkImage(
+                                            imageUrl: widget.product.logo,
+                                            height: 80,
+                                            width: 80,
+                                            fit: BoxFit.fill,
+                                          )
+                                        : Image.memory(
+                                            base64Decode(widget.product.logo),
+                                            height: 80,
+                                            width: 80,
+                                          ),
+                                    Icon(
+                                      MdiIcons.camera,
+                                      color: Colors.black12,
+                                    ),
+                                  ],
+                                )
                               : Image.file(_image),
                         ),
                       ),
@@ -88,6 +118,8 @@ class _AdminAddProductWidgetState extends State<AdminAddProductWidget> {
                           onChanged: (value) => _productName = value,
                           decoration:
                               InputDecoration(labelText: "Enter Product Name"),
+                          enabled: false,
+                          initialValue: widget.product.name,
                         ),
                       ),
                     ],
@@ -98,6 +130,7 @@ class _AdminAddProductWidgetState extends State<AdminAddProductWidget> {
                       labelText: "Price",
                       prefix: Text("Rs. "),
                     ),
+                    initialValue: widget.product.price.toString(),
                     keyboardType:
                         TextInputType.numberWithOptions(decimal: true),
                   ),
@@ -154,10 +187,11 @@ class _AdminAddProductWidgetState extends State<AdminAddProductWidget> {
                                   style: TextStyle(color: Colors.white),
                                 )
                               : FutureBuilder(
-                                  future: ProductManagementService.addProduct(
+                                  future:
+                                      ProductManagementService.updateProduct(
                                     _productName,
                                     _productPrice,
-                                    _image.path,
+                                    _image != null ? _image.path : "",
                                     _categoryVal.toString(),
                                   ).then((value) {
                                     Navigator.popUntil(context,

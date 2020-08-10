@@ -9,6 +9,20 @@ class AppDataBLoC {
   static Cart cart;
   static UserData data;
   static int basketId;
+  static List<String> categoryList = [
+    "View All",
+    "Fruits & Vegetables",
+    "Foodgrains, Oil & Masala",
+    "Bakery, Cakes & Dairy",
+    "Beverages",
+    "Snacks & Branded Foods",
+    "Beauty & Hygiene",
+    "Cleaning & Household",
+    "Kitchen, Garden & Pets",
+    "Eggs,Meat & Fish",
+    "Gourmet & World Food",
+    "Baby Care",
+  ];
   final cartStream = BehaviorSubject<Cart>();
   final cartNum = BehaviorSubject<int>();
   AppDataBLoC(UserData userData, int basketIdStr) {
@@ -45,7 +59,7 @@ class AppDataBLoC {
       });
       cartNum.add(itemCount);
       cart.totalPrice = totalPrice;
-      cartStream.add(cart);
+      //cartStream.add(cart);
       //print(cart.toJson().toString());
       CartManagementService.updateCart(cart).then((value) {
         cart = value.values.toList()[0];

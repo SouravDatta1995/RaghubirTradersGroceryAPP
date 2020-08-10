@@ -5,6 +5,10 @@ import 'package:raghuvir_traders/NavigationPages/CartPage.dart';
 import 'package:raghuvir_traders/NavigationPages/CustomerHomePage..dart';
 
 class DrawerWidget extends StatefulWidget {
+  final String currentPage;
+
+  const DrawerWidget({Key key, this.currentPage}) : super(key: key);
+
   @override
   _DrawerWidgetState createState() => _DrawerWidgetState();
 }
@@ -58,18 +62,23 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                 ListTile(
                   title: Text("Products"),
                   onTap: () {
-                    Navigator.pushNamedAndRemoveUntil(
+                    Navigator.pop(context);
+                    if (widget.currentPage != "Products")
+                      Navigator.pushNamedAndRemoveUntil(
                         context,
                         CustomerHomePage.id,
-                        ModalRoute.withName(CustomerHomePage.id),
-                        arguments: AppDataBLoC.data);
+                        (route) => false,
+                      );
                   },
                 ),
                 ListTile(
                   title: Text("Cart"),
                   onTap: () {
                     setState(() {
-                      Navigator.pushNamed(context, CartPage.id);
+                      Navigator.pop(context);
+                      if (widget.currentPage != "Cart") {
+                        Navigator.pushNamed(context, CartPage.id);
+                      }
                     });
                   },
                 ),
@@ -94,7 +103,8 @@ class _DrawerWidgetState extends State<DrawerWidget> {
               onTap: () {
 //              AppDataBLoC.appDataBLoC.dispose();
                 UserLogin.setCachePhoneNumber(0);
-                Navigator.popAndPushNamed(context, '/');
+                Navigator.pushNamedAndRemoveUntil(
+                    context, '/', (route) => false);
               },
               child: Container(
                 color: Colors.blueAccent,

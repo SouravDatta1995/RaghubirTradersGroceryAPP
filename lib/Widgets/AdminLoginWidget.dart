@@ -56,7 +56,8 @@ class _AdminLoginWidgetState extends State<AdminLoginWidget> {
             Text("Forgot Password"),
             RaisedButton(
               onPressed: () {
-                Navigator.pushNamed(context, AdminHomePage.id);
+                Navigator.pushNamedAndRemoveUntil(context, AdminHomePage.id,
+                    ModalRoute.withName(AdminHomePage.id));
               },
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
