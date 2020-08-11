@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:raghuvir_traders/Elements/AppDataBLoC.dart';
 import 'package:raghuvir_traders/NavigationPages/CustomerHomePage..dart';
 import 'package:raghuvir_traders/Services/UserLoginService.dart';
@@ -10,8 +11,15 @@ class NewUser extends StatefulWidget {
 }
 
 class _NewUserState extends State<NewUser> {
-  String _fName, _lName;
-  bool _newUserLoad = false;
+  String _fName, _lName, _address;
+  bool _newUserLoad;
+  String _position;
+  @override
+  void initState() {
+    _newUserLoad = false;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final String phoneNumber = ModalRoute.of(context).settings.arguments;
@@ -68,6 +76,10 @@ class _NewUserState extends State<NewUser> {
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
+              child: addressField(),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
               child: newUserBtn(phoneNumber),
             ),
           ],
@@ -97,7 +109,9 @@ class _NewUserState extends State<NewUser> {
                   )
                 : FutureBuilder(
                     future: UserLoginService.addUser(
-                            phoneNumber, _fName.trim() + " " + _lName.trim())
+                            phoneNumber,
+                            _fName.trim() + " " + _lName.trim(),
+                            "Lat : " + _position)
                         .then((value) {
                       if (value.keys.toList()[0] == "User")
                         Navigator.pushNamedAndRemoveUntil(
@@ -114,5 +128,59 @@ class _NewUserState extends State<NewUser> {
                     ),
                   ),
           );
+  }
+
+  Widget addressField() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        FutureBuilder<Position>(
+          future: Geolocator()
+              .getCurrentPosition(desiredAccuracy: LocationAccuracy.best),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return FutureBuilder<List<Placemark>>(
+                future: Geolocator().placemarkFromPosition(snapshot.data),
+                builder: (context, snapshot1) {
+                  if (snapshot1.hasData) {
+                    Placemark placeMark = snapshot1.data[0];
+                    String name = placeMark.name + ", ";
+                    String subLocality = placeMark.subLocality != ""
+                        ? placeMark.subLocality + ", "
+                        : "";
+                    String locality = placeMark.locality != ""
+                        ? placeMark.locality + ", "
+                        : "";
+                    String administrativeArea =
+                        placeMark.administrativeArea != ""
+                            ? placeMark.administrativeArea + ", "
+                            : "";
+                    String postalCode = placeMark.postalCode + ", ";
+                    String country = placeMark.country;
+                    String _position = name +
+                        subLocality +
+                        locality +
+                        administrativeArea +
+                        postalCode +
+                        country;
+                    return Text(
+                      _position,
+                    );
+                  } else {
+                    return Text("Location");
+                  }
+                },
+              );
+            } else {
+              return Text("Location");
+            }
+          },
+        ),
+        Icon(
+          Icons.my_location,
+          color: Colors.blue,
+        ),
+      ],
+    );
   }
 }

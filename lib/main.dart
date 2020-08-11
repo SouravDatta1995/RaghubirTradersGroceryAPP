@@ -4,6 +4,7 @@ import 'package:raghuvir_traders/NavigationPages/CartPage.dart';
 import 'package:raghuvir_traders/NavigationPages/CustomerHomePage..dart';
 import 'package:raghuvir_traders/NavigationPages/Login.dart';
 import 'package:raghuvir_traders/NavigationPages/NewUser.dart';
+import 'package:raghuvir_traders/NavigationPages/OrderPage.dart';
 
 void main() {
   runApp(MyApp());
@@ -37,6 +38,7 @@ class MyApp extends StatelessWidget {
         AdminHomePage.id: (context) => AdminHomePage(),
         NewUser.id: (context) => NewUser(),
         CartPage.id: (context) => CartPage(),
+        OrderPage.id: (context) => OrderPage(),
       },
     );
   }

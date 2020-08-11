@@ -3,6 +3,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:raghuvir_traders/Elements/AppDataBLoC.dart';
 import 'package:raghuvir_traders/Elements/Cart.dart';
 import 'package:raghuvir_traders/NavigationPages/CustomerHomePage..dart';
+import 'package:raghuvir_traders/NavigationPages/OrderPage.dart';
 import 'package:raghuvir_traders/Widgets/CartItem.dart';
 import 'package:raghuvir_traders/Widgets/DrawerWidget.dart';
 
@@ -100,41 +101,48 @@ class _CartPageState extends State<CartPage> {
                       itemCount: _products.length,
                     ),
                   ),
-                  Container(
-                    color: Colors.blueAccent,
-                    height: 60,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Expanded(
-                            child: Text(
-                              "Tap to order",
-                              style: TextStyle(color: Colors.white),
+                  GestureDetector(
+                    excludeFromSemantics: false,
+                    onTap: () {
+                      Navigator.pushNamed(context, OrderPage.id);
+                    },
+                    child: Container(
+                      color: Colors.blueAccent,
+                      height: 60,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Expanded(
+                              child: Text(
+                                "Tap to order",
+                                style: TextStyle(color: Colors.white),
+                              ),
                             ),
-                          ),
-                          Expanded(
-                            child: StreamBuilder<Cart>(
-                              stream: AppDataBLoC.appDataBLoC.cartStream.stream,
-                              builder: (context, snapshot) => snapshot.hasData
-                                  ? Text(
-                                      "Rs. " +
-                                          snapshot.data.totalPrice.toString(),
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                      ),
-                                      textAlign: TextAlign.right,
-                                    )
-                                  : Container(),
+                            Expanded(
+                              child: StreamBuilder<Cart>(
+                                stream:
+                                    AppDataBLoC.appDataBLoC.cartStream.stream,
+                                builder: (context, snapshot) => snapshot.hasData
+                                    ? Text(
+                                        "Rs. " +
+                                            snapshot.data.totalPrice.toString(),
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                        textAlign: TextAlign.right,
+                                      )
+                                    : Container(),
+                              ),
                             ),
-                          ),
-                          Icon(
-                            MdiIcons.arrowRight,
-                            size: 20.0,
-                            color: Colors.white,
-                          ),
-                        ],
+                            Icon(
+                              MdiIcons.arrowRight,
+                              size: 20.0,
+                              color: Colors.white,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),

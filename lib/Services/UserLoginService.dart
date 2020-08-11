@@ -42,7 +42,7 @@ class UserLoginService {
   }
 
   static Future<Map<String, dynamic>> addUser(
-      String phoneNumber, String userName) async {
+      String phoneNumber, String userName, String address) async {
     //print("Det:" + phoneNumber + userName);
     final response = await http.post(
       'http://15.207.50.9:8082/users/',
@@ -52,6 +52,7 @@ class UserLoginService {
       body: jsonEncode(<String, dynamic>{
         'Number': int.parse(phoneNumber),
         'Name': userName,
+        'Address': address,
       }),
     );
     //print(response.statusCode.toString());
@@ -60,6 +61,7 @@ class UserLoginService {
         "User": UserData(
             name: userName,
             phoneNumber: int.parse(phoneNumber),
+            address: address,
             id: int.parse(jsonDecode(response.body).toString()))
       };
     } else {
