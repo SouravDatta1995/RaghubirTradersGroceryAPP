@@ -11,11 +11,15 @@ class NewUser extends StatefulWidget {
 }
 
 class _NewUserState extends State<NewUser> {
-  String _fName, _lName, _address;
+  String _fName, _lName;
   bool _newUserLoad;
-  String _position;
+  String _address, _additionalAddress;
   @override
   void initState() {
+    _address = "";
+    _additionalAddress = "";
+    _fName = "";
+    _lName = "";
     _newUserLoad = false;
     super.initState();
   }
@@ -80,6 +84,16 @@ class _NewUserState extends State<NewUser> {
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                onChanged: (value) {
+                  _additionalAddress = value;
+                },
+                decoration: InputDecoration(
+                    labelText: "Flat No/House No/Additional details"),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
               child: newUserBtn(phoneNumber),
             ),
           ],
@@ -89,96 +103,107 @@ class _NewUserState extends State<NewUser> {
   }
 
   Widget newUserBtn(String phoneNumber) {
-    return _fName == "" || _lName == ""
-        ? RaisedButton(
-            onPressed: null,
-            child: Text("Continue"),
-          )
-        : RaisedButton(
-            onPressed: () {
-              FocusScope.of(context).unfocus();
-              setState(() {
-                _newUserLoad = true;
-              });
-            },
-            color: Colors.blueAccent,
-            child: _newUserLoad == false
-                ? Text(
-                    "Continue",
-                    style: TextStyle(color: Colors.white),
-                  )
-                : FutureBuilder(
-                    future: UserLoginService.addUser(
-                            phoneNumber,
-                            _fName.trim() + " " + _lName.trim(),
-                            "Lat : " + _position)
-                        .then((value) {
-                      if (value.keys.toList()[0] == "User")
-                        Navigator.pushNamedAndRemoveUntil(
-                            context,
-                            CustomerHomePage.id,
-                            ModalRoute.withName(CustomerHomePage.id),
-                            arguments: value.values.toList()[0]);
-                      AppDataBLoC.data = value.values.toList()[0];
-                      return value;
-                    }),
-                    builder: (context, snapshot) => Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: CircularProgressIndicator(),
-                    ),
-                  ),
-          );
+    return Builder(
+      builder: (context) => RaisedButton(
+        onPressed: () {
+          FocusScope.of(context).unfocus();
+          setState(() {
+            if (_fName == "" || _lName == "" || _address == "")
+              Scaffold.of(context).showSnackBar(SnackBar(
+                content: Text("Please fill all the fields"),
+              ));
+            else
+              _newUserLoad = true;
+          });
+        },
+        color: Colors.blueAccent,
+        child: _newUserLoad == false
+            ? Text(
+                "Continue",
+                style: TextStyle(color: Colors.white),
+              )
+            : FutureBuilder(
+                future: UserLoginService.addUser(
+                        phoneNumber,
+                        _fName.trim() + " " + _lName.trim(),
+                        _address + _additionalAddress)
+                    .then((value) {
+                  if (value.keys.toList()[0] == "User")
+                    Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        CustomerHomePage.id,
+                        ModalRoute.withName(CustomerHomePage.id),
+                        arguments: value.values.toList()[0]);
+                  AppDataBLoC.data = value.values.toList()[0];
+                  return value;
+                }),
+                builder: (context, snapshot) => Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+      ),
+    );
   }
 
   Widget addressField() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        FutureBuilder<Position>(
-          future: Geolocator()
-              .getCurrentPosition(desiredAccuracy: LocationAccuracy.best),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return FutureBuilder<List<Placemark>>(
-                future: Geolocator().placemarkFromPosition(snapshot.data),
-                builder: (context, snapshot1) {
-                  if (snapshot1.hasData) {
-                    Placemark placeMark = snapshot1.data[0];
-                    String name = placeMark.name + ", ";
-                    String subLocality = placeMark.subLocality != ""
-                        ? placeMark.subLocality + ", "
-                        : "";
-                    String locality = placeMark.locality != ""
-                        ? placeMark.locality + ", "
-                        : "";
-                    String administrativeArea =
-                        placeMark.administrativeArea != ""
-                            ? placeMark.administrativeArea + ", "
-                            : "";
-                    String postalCode = placeMark.postalCode + ", ";
-                    String country = placeMark.country;
-                    String _position = name +
-                        subLocality +
-                        locality +
-                        administrativeArea +
-                        postalCode +
-                        country;
-                    return Text(
-                      _position,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Expanded(
+              child: FutureBuilder<Position>(
+                future: Geolocator()
+                    .getCurrentPosition(desiredAccuracy: LocationAccuracy.best),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return FutureBuilder<List<Placemark>>(
+                      future: Geolocator().placemarkFromPosition(snapshot.data),
+                      builder: (context, snapshot1) {
+                        if (snapshot1.hasData) {
+                          Placemark placeMark = snapshot1.data[0];
+                          String name = placeMark.name + ", ";
+                          String subLocality = placeMark.subLocality != ""
+                              ? placeMark.subLocality + ", "
+                              : "";
+                          String locality = placeMark.locality != ""
+                              ? placeMark.locality + ", "
+                              : "";
+                          String administrativeArea =
+                              placeMark.administrativeArea != ""
+                                  ? placeMark.administrativeArea + ", "
+                                  : "";
+                          String postalCode = placeMark.postalCode + ", ";
+                          String country = placeMark.country;
+                          _address = name +
+                              subLocality +
+                              locality +
+                              administrativeArea +
+                              postalCode +
+                              country;
+                          //print(_position);
+
+                          return Text(
+                            _address,
+                          );
+                        } else {
+                          return Text("Detecting...");
+                        }
+                      },
                     );
                   } else {
-                    return Text("Location");
+                    return Text("Detecting...");
                   }
                 },
-              );
-            } else {
-              return Text("Location");
-            }
-          },
-        ),
-        Icon(
-          Icons.my_location,
-          color: Colors.blue,
+              ),
+            ),
+            Icon(
+              Icons.my_location,
+              color: Colors.blue,
+            ),
+          ],
         ),
       ],
     );

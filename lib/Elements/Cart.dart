@@ -7,6 +7,7 @@ class Cart {
   List<BasketDetails> basketDetails;
   double totalPrice;
   bool isPaid;
+  bool isDelivered;
 
   Cart({this.basketId, this.customer, this.basketDetails, this.totalPrice});
 
@@ -23,6 +24,7 @@ class Cart {
     }
     totalPrice = json['TotalPrice'];
     isPaid = json['IsPaid'];
+    isDelivered = json['IsDelivered'];
   }
 
   Map<String, dynamic> toJson() {

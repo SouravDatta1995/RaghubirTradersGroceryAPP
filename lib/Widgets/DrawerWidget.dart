@@ -3,6 +3,7 @@ import 'package:raghuvir_traders/Elements/AppDataBLoC.dart';
 import 'package:raghuvir_traders/Elements/UserLogin.dart';
 import 'package:raghuvir_traders/NavigationPages/CartPage.dart';
 import 'package:raghuvir_traders/NavigationPages/CustomerHomePage..dart';
+import 'package:raghuvir_traders/NavigationPages/CustomerOrderHistory.dart';
 
 class DrawerWidget extends StatefulWidget {
   final String currentPage;
@@ -56,7 +57,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             ),
           ),
           Expanded(
-            flex: 8,
+            flex: 7,
             child: ListView(
               children: <Widget>[
                 ListTile(
@@ -85,7 +86,12 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                 ListTile(
                   title: Text("Orders"),
                   onTap: () {
-                    setState(() {});
+                    setState(() {
+                      Navigator.pop(context);
+                      if (widget.currentPage != "Order") {
+                        Navigator.pushNamed(context, CustomerOrderHistory.id);
+                      }
+                    });
                   },
                 ),
                 ListTile(
@@ -94,6 +100,15 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     setState(() {});
                   },
                 ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text("Powered by : Mukherjee Solutions"),
+                Text("Contact : 7059249929"),
               ],
             ),
           ),

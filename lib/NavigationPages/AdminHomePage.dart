@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:raghuvir_traders/Widgets/AdminOrdersPage.dart';
 import 'package:raghuvir_traders/Widgets/AdminProductPage.dart';
 
 class AdminHomePage extends StatefulWidget {
@@ -11,6 +12,7 @@ class AdminHomePage extends StatefulWidget {
 class _AdminHomePageState extends State<AdminHomePage> {
   List<Widget> _bodyWidgets = [
     AdminProductPage(),
+    AdminOrdersPage(),
   ];
   List<BottomNavigationBarItem> _navBarItems = [
     BottomNavigationBarItem(
@@ -26,10 +28,10 @@ class _AdminHomePageState extends State<AdminHomePage> {
       title: Text("ORDERS"),
     ),
   ];
-  int index;
+  int _selectedIndex;
   @override
   void initState() {
-    index = 0;
+    _selectedIndex = 0;
     super.initState();
   }
 
@@ -47,8 +49,16 @@ class _AdminHomePageState extends State<AdminHomePage> {
         ),
         title: Text("Welcome <Admin>"),
       ),
-      body: _bodyWidgets[0],
-      bottomNavigationBar: BottomNavigationBar(items: _navBarItems),
+      body: _bodyWidgets[_selectedIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        items: _navBarItems,
+        currentIndex: _selectedIndex,
+        onTap: (value) {
+          setState(() {
+            _selectedIndex = value;
+          });
+        },
+      ),
     );
   }
 }

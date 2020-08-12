@@ -59,12 +59,9 @@ class AppDataBLoC {
       });
       cartNum.add(itemCount);
       cart.totalPrice = totalPrice;
-      //cartStream.add(cart);
+      cartStream.add(cart);
       //print(cart.toJson().toString());
-      CartManagementService.updateCart(cart).then((value) {
-        cart = value.values.toList()[0];
-        cartStream.add(cart);
-      });
+      CartManagementService.updateCart(cart);
     } else {
       Cart newCart = Cart(
           customer: data,
@@ -72,9 +69,14 @@ class AppDataBLoC {
           totalPrice: product.price);
       CartManagementService.updateCart(newCart).then((value) {
         cart = value.values.toList()[0];
+        print(cart.basketId.toString());
         cartNum.add(1);
         cartStream.add(cart);
       });
     }
+  }
+
+  cartUpdate() {
+    CartManagementService.updateCart(cart);
   }
 }

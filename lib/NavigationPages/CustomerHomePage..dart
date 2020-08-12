@@ -21,7 +21,7 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
   int _sortVal, _categoryVal;
   Future<List<Product>> _products;
   bool _searchFlag = false;
-  AppDataBLoC _bLoC;
+  // AppDataBLoC _bLoC;
   List<String> _categoryList;
   @override
   void initState() {
@@ -32,7 +32,7 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
     _searchFlag = false;
     CartManagementService.getLastCart(AppDataBLoC.data.id).then((value) {
       Cart c = value.values.toList()[0];
-      _bLoC = AppDataBLoC(AppDataBLoC.data, c.basketId);
+      //_bLoC = AppDataBLoC(AppDataBLoC.data, c.basketId);
       int count = 0;
       AppDataBLoC.cart = c;
       AppDataBLoC.appDataBLoC.cartStream.add(c);

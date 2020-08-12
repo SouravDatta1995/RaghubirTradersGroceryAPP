@@ -76,7 +76,7 @@ class _CartItemState extends State<CartItem> {
                           padding: const EdgeInsets.only(bottom: 4.0),
                           child: Text(
                             AppDataBLoC.categoryList[
-                                int.parse(widget.product.category)],
+                                int.parse(widget.product.category ?? "0")],
                             textAlign: TextAlign.left,
                             style: TextStyle(color: Colors.black45),
                           ),

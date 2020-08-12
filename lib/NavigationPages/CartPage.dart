@@ -104,6 +104,7 @@ class _CartPageState extends State<CartPage> {
                   GestureDetector(
                     excludeFromSemantics: false,
                     onTap: () {
+                      AppDataBLoC.appDataBLoC.cartUpdate();
                       Navigator.pushNamed(context, OrderPage.id);
                     },
                     child: Container(

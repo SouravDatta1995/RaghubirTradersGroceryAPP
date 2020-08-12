@@ -14,10 +14,6 @@ class OTPWidget extends StatefulWidget {
 class _OTPWidgetState extends State<OTPWidget> {
   String _otpCode;
   bool _isAutoFill, _resendStatus;
-  _getSignature() async {
-    String signature = await SmsAutoFill().getAppSignature;
-    print("Signature : " + signature);
-  }
 
   _onOtpCallback(String otpCode) {
     setState(() {
@@ -32,7 +28,6 @@ class _OTPWidgetState extends State<OTPWidget> {
     _isAutoFill = false;
     _resendStatus = false;
     _loginLoad = true;
-    _getSignature();
   }
 
   @override

@@ -3,7 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:raghuvir_traders/Elements/AppDataBLoC.dart';
 import 'package:raghuvir_traders/Elements/Cart.dart';
+import 'package:raghuvir_traders/Elements/RazorPayOptions.dart';
+import 'package:raghuvir_traders/NavigationPages/CustomerOrderHistory.dart';
 import 'package:raghuvir_traders/Services/CartManagementService.dart';
+import 'package:raghuvir_traders/Services/OrderManagementService.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class OrderPage extends StatefulWidget {
@@ -14,29 +18,7 @@ class OrderPage extends StatefulWidget {
 
 class _OrderPageState extends State<OrderPage> {
   double _total;
-  void launchWhatsApp({String phone, String message}) async {
-    String url() {
-      return "whatsapp://send?phone=$phone";
-    }
-
-    if (await canLaunch(url())) {
-      await launch(url());
-    } else {
-      throw 'Could not launch ${url()}';
-    }
-  }
-
-  void launchPhone({String phoneNumber}) async {
-    String url() {
-      return "tel:$phoneNumber";
-    }
-
-    if (await canLaunch(url())) {
-      await launch(url());
-    } else {
-      throw 'Could not launch ${url()}';
-    }
-  }
+  int _basketId;
 
   @override
   void initState() {
@@ -55,57 +37,24 @@ class _OrderPageState extends State<OrderPage> {
         backgroundColor: Colors.blueAccent,
         iconTheme: IconThemeData(color: Colors.white),
       ),
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                totalCard(),
-                SizedBox(
-                  height: 16.0,
-                ),
-                userDetailsCard(),
-                SizedBox(
-                  height: 16.0,
-                ),
-                OrderDetailsCard(),
-                SizedBox(
-                  height: 16.0,
-                ),
-                PaymentSelectorCard(),
-              ],
-            ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          totalCard(),
+          SizedBox(
+            height: 8.0,
           ),
-          Align(
-            alignment: Alignment.bottomRight,
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 32.0, horizontal: 80.0),
-              child: FloatingActionButton(
-                heroTag: null,
-                onPressed: () {
-                  launchWhatsApp(phone: "+919477014134");
-                },
-                child: Icon(MdiIcons.whatsapp),
-              ),
-            ),
+          userDetailsCard(),
+          SizedBox(
+            height: 8.0,
           ),
-          Align(
-            alignment: Alignment.bottomRight,
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 32.0, horizontal: 16.0),
-              child: FloatingActionButton(
-                heroTag: null,
-                onPressed: () {
-                  launchPhone(phoneNumber: "+91 94770 14134");
-                },
-                child: Icon(MdiIcons.phone),
-              ),
-            ),
+          Expanded(
+            child: OrderDetailsCard(),
           ),
+          SizedBox(
+            height: 8.0,
+          ),
+          PaymentSelectorCard(),
         ],
       ),
     );
@@ -209,81 +158,103 @@ class OrderDetailsCard extends StatelessWidget {
                   .where((element) => element.quantity > 0)
                   .toList();
               b.sort((a, b) => a.quantity.compareTo(b.quantity));
+              ScrollController scrollController = ScrollController();
               return Column(
                 children: <Widget>[
-                  ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: b.length,
-                    itemBuilder: (context, index) {
-                      double price = b[index].product.price * b[index].quantity;
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4.0),
-                        child: Row(
-                          children: <Widget>[
-                            Expanded(
-                              flex: 3,
-                              child: Text(
-                                b[index].product.name,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 2,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Expanded(
-                                    flex: 2,
-                                    child: Text(
-                                      b[index].product.price.toString(),
-                                      textAlign: TextAlign.left,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Icon(
-                                      MdiIcons.close,
-                                      size: 12.0,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Text(
-                                      b[index].quantity.toString(),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Icon(
-                                      MdiIcons.equal,
-                                      size: 12.0,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 3,
-                                    child: Text(
-                                      price.toString(),
-                                      textAlign: TextAlign.right,
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
+                  Expanded(
+                    child: Text(
+                      "Item List",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                   ),
                   Divider(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text(
-                        "Total",
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                  Expanded(
+                    flex: 8,
+                    child: Scrollbar(
+                      controller: scrollController,
+                      isAlwaysShown: true,
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 16.0),
+                        child: ListView.builder(
+                          controller: scrollController,
+                          shrinkWrap: true,
+                          itemCount: b.length,
+                          itemBuilder: (context, index) {
+                            double price =
+                                b[index].product.price * b[index].quantity;
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 4.0),
+                              child: Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: Text(
+                                      b[index].product.name,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        Expanded(
+                                          flex: 3,
+                                          child: Text(
+                                            b[index].product.price.toString(),
+                                            textAlign: TextAlign.left,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Icon(
+                                            MdiIcons.close,
+                                            size: 12.0,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                            b[index].quantity.toString(),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Icon(
+                                            MdiIcons.equal,
+                                            size: 12.0,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 3,
+                                          child: Text(
+                                            price.toString(),
+                                            textAlign: TextAlign.right,
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
                       ),
-                      Text(
-                        c.totalPrice.toString(),
-                        textAlign: TextAlign.right,
-                      ),
-                    ],
+                    ),
+                  ),
+                  Divider(),
+                  Expanded(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(
+                          "Total",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          c.totalPrice.toString(),
+                          textAlign: TextAlign.right,
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               );
@@ -296,16 +267,76 @@ class OrderDetailsCard extends StatelessWidget {
 }
 
 class PaymentSelectorCard extends StatefulWidget {
+  final int basketId;
+
+  const PaymentSelectorCard({Key key, this.basketId}) : super(key: key);
   @override
   _PaymentSelectorCardState createState() => _PaymentSelectorCardState();
 }
 
 class _PaymentSelectorCardState extends State<PaymentSelectorCard> {
+  Razorpay _razorPay;
   int _paymentSelectorIndex;
   @override
   void initState() {
     _paymentSelectorIndex = 0;
+    _razorPay = Razorpay();
+    _razorPay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorPay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorPay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
     super.initState();
+  }
+
+  void _handlePaymentSuccess(PaymentSuccessResponse response) {
+    print("Success" +
+        response.signature +
+        " " +
+        response.orderId +
+        " " +
+        response.paymentId);
+    Navigator.pushNamedAndRemoveUntil(
+        context, CustomerOrderHistory.id, (route) => false);
+  }
+
+  void _handlePaymentError(PaymentFailureResponse response) {
+    print("Failure");
+    Scaffold.of(context).showSnackBar(SnackBar(
+      content: Text("Payment Failed"),
+    ));
+  }
+
+  void _handleExternalWallet() {
+    print("Wallet");
+  }
+
+  void launchWhatsApp({String phone, String message}) async {
+    String url() {
+      return "whatsapp://send?phone=$phone";
+    }
+
+    if (await canLaunch(url())) {
+      await launch(url());
+    } else {
+      throw 'Could not launch ${url()}';
+    }
+  }
+
+  void launchPhone({String phoneNumber}) async {
+    String url() {
+      return "tel:$phoneNumber";
+    }
+
+    if (await canLaunch(url())) {
+      await launch(url());
+    } else {
+      throw 'Could not launch ${url()}';
+    }
+  }
+
+  @override
+  void dispose() {
+    _razorPay.clear();
+    super.dispose();
   }
 
   @override
@@ -322,7 +353,6 @@ class _PaymentSelectorCardState extends State<PaymentSelectorCard> {
                 Text(
                   "Payment",
                   style: TextStyle(
-                    fontSize: 18.0,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -349,7 +379,7 @@ class _PaymentSelectorCardState extends State<PaymentSelectorCard> {
                       },
                     ),
                     ChoiceChip(
-                      label: Text("Online Payment(RazorPay)"),
+                      label: Text("Online Payment"),
                       labelStyle: TextStyle(
                         color: _paymentSelectorIndex == 2
                             ? Colors.white
@@ -369,17 +399,62 @@ class _PaymentSelectorCardState extends State<PaymentSelectorCard> {
             ),
           ),
         ),
-        SizedBox(
-          height: 16.0,
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32.0),
-          child: RaisedButton(
-            color: Colors.blue,
-            textColor: Colors.white,
-            onPressed: _paymentSelectorIndex == 0 ? null : () {},
-            child: Text("Continue"),
-          ),
+        ButtonBar(
+          alignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            FloatingActionButton.extended(
+              heroTag: null,
+              label: Text("Continue Payment"),
+              backgroundColor:
+                  _paymentSelectorIndex == 0 ? Colors.grey : Colors.green,
+              onPressed: _paymentSelectorIndex == 0
+                  ? null
+                  : _paymentSelectorIndex == 1
+                      ? () {}
+                      : () {
+                          OrderManagementService.initiateCheckout(
+                                  AppDataBLoC.cart.totalPrice,
+                                  AppDataBLoC.basketId,
+                                  AppDataBLoC.cart.customer.id)
+                              .then((value) {
+                            RazorPayOptions rpo = value.values.toList()[0];
+                            print(rpo.amount.toString());
+                            var options = {
+                              'key': 'rzp_test_pgmDCnUN2PTsMK',
+                              'amount': rpo
+                                  .amount, //in the smallest currency sub-unit.
+                              'name': 'Raghuvir Traders',
+                              'order_id':
+                                  rpo.id, // Generate order_id using Orders API
+                              'description': 'Order',
+                              'timeout': 300, // in seconds
+                              'prefill': {
+                                'name': AppDataBLoC.data.name,
+                                'contact':
+                                    AppDataBLoC.data.phoneNumber.toString()
+                              }
+                            };
+                            _razorPay.open(options);
+                          });
+                        },
+            ),
+            FloatingActionButton(
+              heroTag: null,
+              onPressed: () {
+                launchPhone(phoneNumber: "9477014134");
+              },
+              child: Icon(MdiIcons.phone),
+              backgroundColor: Colors.blueAccent,
+            ),
+            FloatingActionButton(
+              heroTag: null,
+              onPressed: () {
+                launchWhatsApp(phone: "+919477014134");
+              },
+              child: Icon(MdiIcons.whatsapp),
+              backgroundColor: Colors.blueAccent,
+            ),
+          ],
         ),
       ],
     );

@@ -57,7 +57,7 @@ class UserLogin {
         Navigator.pushNamedAndRemoveUntil(
           context,
           NewUser.id,
-          ModalRoute.withName(NewUser.id),
+          (route) => false,
           arguments: phoneNumber,
         );
       } else {
