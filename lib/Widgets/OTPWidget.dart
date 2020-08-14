@@ -14,7 +14,7 @@ class OTPWidget extends StatefulWidget {
 
 class _OTPWidgetState extends State<OTPWidget> {
   String _otpCode;
-  bool _isAutoFill, _resendStatus;
+  bool _isAutoFill, _resendStatus, _validOtp;
 
   _onOtpCallback(String otpCode) {
     setState(() {
@@ -29,6 +29,7 @@ class _OTPWidgetState extends State<OTPWidget> {
     _isAutoFill = false;
     _resendStatus = false;
     _loginLoad = true;
+    _validOtp = true;
   }
 
   @override
@@ -68,6 +69,15 @@ class _OTPWidgetState extends State<OTPWidget> {
         SizedBox(
           height: 20,
         ),
+        _validOtp
+            ? Container(
+                height: 0.0,
+                width: 0.0,
+              )
+            : Text(
+                "Invalid Otp",
+                style: TextStyle(color: Colors.red),
+              ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: PinFieldAutoFill(
@@ -162,14 +172,19 @@ class _OTPWidgetState extends State<OTPWidget> {
                     //TODO : Update to getUserLoginViaOtp for otp validation
                     future: UserLogin.getUserLogin(context, widget.phoneNumber),
                     builder: (context, snapshot) {
-                      return Container(
-                        height: 15.0,
-                        width: 15.0,
-                        child: CircularProgressIndicator(
-                          backgroundColor: Colors.white,
-                          strokeWidth: 2.0,
-                        ),
-                      );
+                      if (!snapshot.hasData)
+                        return Container(
+                          height: 15.0,
+                          width: 15.0,
+                          child: CircularProgressIndicator(
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.white),
+                            strokeWidth: 2.0,
+                          ),
+                        );
+                      else {
+                        return Text("Submit");
+                      }
                     },
                   )
                 : Text("Submit"),

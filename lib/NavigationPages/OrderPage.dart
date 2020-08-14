@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:raghuvir_traders/Elements/AppDataBLoC.dart';
 import 'package:raghuvir_traders/Elements/Cart.dart';
@@ -119,6 +120,7 @@ class _OrderPageState extends State<OrderPage> {
                         AppDataBLoC.deliveryAddress = value;
                       },
                       controller: _textEditingController,
+                      enabled: !_sameAddress,
                       decoration:
                           InputDecoration(labelText: "Delivery Address"),
                     ),
@@ -131,7 +133,12 @@ class _OrderPageState extends State<OrderPage> {
                       onChanged: (value) {
                         AppDataBLoC.pin = int.parse(value);
                       },
+                      keyboardType: TextInputType.number,
                       decoration: InputDecoration(labelText: "Pin Code"),
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(6),
+                        WhitelistingTextInputFormatter.digitsOnly,
+                      ],
                     ),
                   ),
                 ),
@@ -150,6 +157,7 @@ class _OrderPageState extends State<OrderPage> {
                               AppDataBLoC.data.address;
                         } else {
                           _textEditingController.text = "";
+                          AppDataBLoC.deliveryAddress = "";
                         }
                       },
                     ),
@@ -477,9 +485,18 @@ class _PaymentSelectorCardState extends State<PaymentSelectorCard> {
                   : _paymentSelectorIndex == 1
                       ? () {
                           //print("Pin: " + AppDataBLoC.pin.toString());
-                          if (AppDataBLoC.pin == 0 || AppDataBLoC.pin == null) {
+                          if (AppDataBLoC.deliveryAddress == "") {
+                            Scaffold.of(context).showSnackBar(SnackBar(
+                              content: Text("Please Enter delivery address"),
+                            ));
+                          } else if (AppDataBLoC.pin == 0 ||
+                              AppDataBLoC.pin == null) {
                             Scaffold.of(context).showSnackBar(SnackBar(
                               content: Text("Please Enter Pin Code"),
+                            ));
+                          } else if (AppDataBLoC.pin < 100000) {
+                            Scaffold.of(context).showSnackBar(SnackBar(
+                              content: Text("Pin Code not valid"),
                             ));
                           } else if (AppDataBLoC.pin != 700104 &&
                               AppDataBLoC.pin != 700063) {
@@ -515,9 +532,18 @@ class _PaymentSelectorCardState extends State<PaymentSelectorCard> {
                           }
                         }
                       : () {
-                          if (AppDataBLoC.pin == 0 || AppDataBLoC.pin == null) {
+                          if (AppDataBLoC.deliveryAddress == "") {
+                            Scaffold.of(context).showSnackBar(SnackBar(
+                              content: Text("Please Enter delivery address"),
+                            ));
+                          } else if (AppDataBLoC.pin == 0 ||
+                              AppDataBLoC.pin == null) {
                             Scaffold.of(context).showSnackBar(SnackBar(
                               content: Text("Please Enter Pin Code"),
+                            ));
+                          } else if (AppDataBLoC.pin < 100000) {
+                            Scaffold.of(context).showSnackBar(SnackBar(
+                              content: Text("Pin Code not valid"),
                             ));
                           } else if (AppDataBLoC.pin != 700104 &&
                               AppDataBLoC.pin != 700063) {

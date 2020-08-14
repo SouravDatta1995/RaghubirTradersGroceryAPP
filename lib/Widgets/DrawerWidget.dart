@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:raghuvir_traders/Elements/AppDataBLoC.dart';
 import 'package:raghuvir_traders/Elements/UserLogin.dart';
+import 'package:raghuvir_traders/NavigationPages/AboutPage.dart';
 import 'package:raghuvir_traders/NavigationPages/CartPage.dart';
 import 'package:raghuvir_traders/NavigationPages/CustomerHomePage..dart';
 import 'package:raghuvir_traders/NavigationPages/CustomerOrderHistory.dart';
@@ -27,6 +28,31 @@ class _DrawerWidgetState extends State<DrawerWidget> {
               child: Stack(
                 children: [
                   Container(
+                    child: Column(
+                      children: [
+                        Expanded(
+                          flex: 4,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "R",
+                                style: TextStyle(
+                                    fontSize: 48, color: Colors.white),
+                              ),
+                              Text(
+                                "\nT",
+                                style: TextStyle(
+                                    fontSize: 48, color: Colors.white),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(),
+                        ),
+                      ],
+                    ),
                     color: Colors.blueAccent,
                   ),
                   Padding(
@@ -95,9 +121,11 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   },
                 ),
                 ListTile(
-                  title: Text("About us"),
+                  title: Text("About this app"),
                   onTap: () {
-                    setState(() {});
+                    setState(() {
+                      Navigator.pushNamed(context, AboutPage.id);
+                    });
                   },
                 ),
               ],
