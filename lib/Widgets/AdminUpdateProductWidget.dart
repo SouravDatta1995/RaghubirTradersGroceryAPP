@@ -28,6 +28,7 @@ class _AdminUpdateProductWidgetState extends State<AdminUpdateProductWidget> {
   bool _saveButtonState = false;
   int _categoryVal;
   List<String> _categoryList;
+  final _formKey = GlobalKey<FormState>();
   Future getImage() async {
     final pickedFile = await picker.getImage(
       source: ImageSource.gallery,
@@ -63,7 +64,7 @@ class _AdminUpdateProductWidgetState extends State<AdminUpdateProductWidget> {
           EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: SingleChildScrollView(
         child: Form(
-          autovalidate: true,
+          key: _formKey,
           child: Container(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -131,6 +132,12 @@ class _AdminUpdateProductWidgetState extends State<AdminUpdateProductWidget> {
                       prefix: Text("Rs. "),
                     ),
                     initialValue: widget.product.price.toString(),
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return 'Please enter a Product Name';
+                      }
+                      return null;
+                    },
                     keyboardType:
                         TextInputType.numberWithOptions(decimal: true),
                   ),
@@ -166,7 +173,9 @@ class _AdminUpdateProductWidgetState extends State<AdminUpdateProductWidget> {
                     alignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       RaisedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          _formKey.currentState.reset();
+                        },
                         child: Center(
                           child: Text(
                             "RESET",
@@ -177,7 +186,8 @@ class _AdminUpdateProductWidgetState extends State<AdminUpdateProductWidget> {
                       RaisedButton(
                         onPressed: () {
                           setState(() {
-                            _saveButtonState = true;
+                            if (_formKey.currentState.validate())
+                              _saveButtonState = true;
                           });
                         },
                         child: Center(

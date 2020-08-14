@@ -173,7 +173,7 @@ class _AdminProductPageState extends State<AdminProductPage> {
     return Card(
       elevation: 3.0,
       child: Container(
-        height: 50,
+        height: 60,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
@@ -208,6 +208,7 @@ class _AdminProductPageState extends State<AdminProductPage> {
               child: Center(
                 child: Text(
                   product.name,
+                  textAlign: TextAlign.center,
                   style: TextStyle(color: Colors.blueGrey),
                 ),
               ),

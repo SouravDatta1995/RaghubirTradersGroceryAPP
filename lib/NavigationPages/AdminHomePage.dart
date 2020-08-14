@@ -39,15 +39,38 @@ class _AdminHomePageState extends State<AdminHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: GestureDetector(
-          onTap: () => Navigator.pushNamedAndRemoveUntil(
-              context, "/", ModalRoute.withName("/")),
-          child: Icon(
-            MdiIcons.arrowLeft,
-            color: Colors.white,
+        actions: [
+          GestureDetector(
+            onTap: () => Navigator.pushNamedAndRemoveUntil(
+                context, "/", ModalRoute.withName("/")),
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+              child: Container(
+                height: 10.0,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.white),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(9.0),
+                  ),
+                ),
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 4.0, horizontal: 8.0),
+                    child: Text(
+                      "Logout",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ),
-        ),
-        title: Text("Welcome <Admin>"),
+        ],
+        automaticallyImplyLeading: false,
+        title: Text("Welcome Admin"),
+        centerTitle: true,
       ),
       body: _bodyWidgets[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(

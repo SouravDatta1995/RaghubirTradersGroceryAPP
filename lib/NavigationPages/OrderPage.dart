@@ -18,10 +18,13 @@ class OrderPage extends StatefulWidget {
 
 class _OrderPageState extends State<OrderPage> {
   double _total;
-  int _basketId;
-
+  TextEditingController _textEditingController = TextEditingController();
+  bool _sameAddress;
   @override
   void initState() {
+    _textEditingController.text = AppDataBLoC.data.address;
+    AppDataBLoC.deliveryAddress = AppDataBLoC.data.address;
+    _sameAddress = true;
     _total = AppDataBLoC.cart.totalPrice;
     super.initState();
   }
@@ -29,6 +32,7 @@ class _OrderPageState extends State<OrderPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
       appBar: AppBar(
         title: Text(
           "Order",
@@ -101,6 +105,60 @@ class _OrderPageState extends State<OrderPage> {
                   child: Text(
                     AppDataBLoC.data.address ?? "Default",
                   ),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 16.0),
+                    child: TextField(
+                      onChanged: (value) {
+                        AppDataBLoC.deliveryAddress = value;
+                      },
+                      controller: _textEditingController,
+                      decoration:
+                          InputDecoration(labelText: "Delivery Address"),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 16.0),
+                    child: TextField(
+                      onChanged: (value) {
+                        AppDataBLoC.pin = int.parse(value);
+                      },
+                      decoration: InputDecoration(labelText: "Pin Code"),
+                    ),
+                  ),
+                ),
+                Column(
+                  children: [
+                    Checkbox(
+                      value: _sameAddress,
+                      onChanged: (value) {
+                        setState(() {
+                          _sameAddress = !_sameAddress;
+                        });
+                        if (value) {
+                          _textEditingController.text =
+                              AppDataBLoC.data.address;
+                          AppDataBLoC.deliveryAddress =
+                              AppDataBLoC.data.address;
+                        } else {
+                          _textEditingController.text = "";
+                        }
+                      },
+                    ),
+                    Text(
+                      "Same as\nabove",
+                      style: TextStyle(fontSize: 12.0),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -267,9 +325,6 @@ class OrderDetailsCard extends StatelessWidget {
 }
 
 class PaymentSelectorCard extends StatefulWidget {
-  final int basketId;
-
-  const PaymentSelectorCard({Key key, this.basketId}) : super(key: key);
   @override
   _PaymentSelectorCardState createState() => _PaymentSelectorCardState();
 }
@@ -288,24 +343,34 @@ class _PaymentSelectorCardState extends State<PaymentSelectorCard> {
   }
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) {
-    print("Success" +
-        response.signature +
-        " " +
-        response.orderId +
-        " " +
-        response.paymentId);
-    Navigator.pushNamedAndRemoveUntil(
-        context, CustomerOrderHistory.id, (route) => false);
+    OrderManagementService.updatePayment(AppDataBLoC.cart.totalPrice,
+            AppDataBLoC.cart.basketId, AppDataBLoC.data.id, "Online")
+        .then((value) {
+      if (value == "Success") {
+        AppDataBLoC.setLastCart().then((value) =>
+            Navigator.pushNamedAndRemoveUntil(
+                context, CustomerOrderHistory.id, (route) => false));
+      } else
+        print("Error");
+    });
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
-    print("Failure");
     Scaffold.of(context).showSnackBar(SnackBar(
       content: Text("Payment Failed"),
     ));
   }
 
-  void _handleExternalWallet() {
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    OrderManagementService.updatePayment(AppDataBLoC.cart.totalPrice,
+            AppDataBLoC.cart.basketId, AppDataBLoC.data.id, response.walletName)
+        .then((value) {
+      if (value == "Success") {
+        Navigator.pushNamedAndRemoveUntil(
+            context, CustomerOrderHistory.id, (route) => false);
+      } else
+        print("Error");
+    });
     print("Wallet");
   }
 
@@ -410,32 +475,87 @@ class _PaymentSelectorCardState extends State<PaymentSelectorCard> {
               onPressed: _paymentSelectorIndex == 0
                   ? null
                   : _paymentSelectorIndex == 1
-                      ? () {}
+                      ? () {
+                          //print("Pin: " + AppDataBLoC.pin.toString());
+                          if (AppDataBLoC.pin == 0 || AppDataBLoC.pin == null) {
+                            Scaffold.of(context).showSnackBar(SnackBar(
+                              content: Text("Please Enter Pin Code"),
+                            ));
+                          } else if (AppDataBLoC.pin != 700104 &&
+                              AppDataBLoC.pin != 700063) {
+                            Scaffold.of(context).showSnackBar(SnackBar(
+                              content: Text("Area Not Deliverable"),
+                            ));
+                          } else {
+                            OrderManagementService.initiateCheckout(
+                                    AppDataBLoC.cart.totalPrice,
+                                    AppDataBLoC.cart.basketId,
+                                    AppDataBLoC.cart.customer.id,
+                                    AppDataBLoC.deliveryAddress +
+                                        " " +
+                                        AppDataBLoC.pin.toString())
+                                .then((value) {
+                              if (value.keys.toList()[0] == "Success")
+                                OrderManagementService.updatePayment(
+                                        AppDataBLoC.cart.totalPrice,
+                                        AppDataBLoC.cart.basketId,
+                                        AppDataBLoC.data.id,
+                                        "COD")
+                                    .then((value) {
+                                  if (value == "Success") {
+                                    AppDataBLoC.setLastCart().then((value) =>
+                                        Navigator.pushNamedAndRemoveUntil(
+                                            context,
+                                            CustomerOrderHistory.id,
+                                            (route) => false));
+                                  } else
+                                    print("Error");
+                                });
+                            });
+                          }
+                        }
                       : () {
-                          OrderManagementService.initiateCheckout(
-                                  AppDataBLoC.cart.totalPrice,
-                                  AppDataBLoC.basketId,
-                                  AppDataBLoC.cart.customer.id)
-                              .then((value) {
-                            RazorPayOptions rpo = value.values.toList()[0];
-                            print(rpo.amount.toString());
-                            var options = {
-                              'key': 'rzp_test_pgmDCnUN2PTsMK',
-                              'amount': rpo
-                                  .amount, //in the smallest currency sub-unit.
-                              'name': 'Raghuvir Traders',
-                              'order_id':
-                                  rpo.id, // Generate order_id using Orders API
-                              'description': 'Order',
-                              'timeout': 300, // in seconds
-                              'prefill': {
-                                'name': AppDataBLoC.data.name,
-                                'contact':
-                                    AppDataBLoC.data.phoneNumber.toString()
+                          if (AppDataBLoC.pin == 0 || AppDataBLoC.pin == null) {
+                            Scaffold.of(context).showSnackBar(SnackBar(
+                              content: Text("Please Enter Pin Code"),
+                            ));
+                          } else if (AppDataBLoC.pin != 700104 &&
+                              AppDataBLoC.pin != 700063) {
+                            Scaffold.of(context).showSnackBar(SnackBar(
+                              content: Text("Area Not Deliverable"),
+                            ));
+                          } else {
+                            OrderManagementService.initiateCheckout(
+                                    AppDataBLoC.cart.totalPrice,
+                                    AppDataBLoC.cart.basketId,
+                                    AppDataBLoC.cart.customer.id,
+                                    AppDataBLoC.deliveryAddress +
+                                        " " +
+                                        AppDataBLoC.pin.toString())
+                                .then((value) {
+                              if (value.keys.toList()[0] == "Success") {
+                                RazorPayOptions rpo = value.values.toList()[0];
+                                print(rpo.amount.toString());
+                                var options = {
+                                  'key': 'rzp_test_pgmDCnUN2PTsMK',
+                                  'amount': rpo.amount,
+                                  //in the smallest currency sub-unit.
+                                  'name': 'Raghuvir Traders',
+                                  'order_id': rpo.id,
+                                  // Generate order_id using Orders API
+                                  'description': 'Order',
+                                  'timeout': 300,
+                                  // in seconds
+                                  'prefill': {
+                                    'name': AppDataBLoC.data.name,
+                                    'contact':
+                                        AppDataBLoC.data.phoneNumber.toString()
+                                  }
+                                };
+                                _razorPay.open(options);
                               }
-                            };
-                            _razorPay.open(options);
-                          });
+                            });
+                          }
                         },
             ),
             FloatingActionButton(

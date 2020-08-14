@@ -8,6 +8,7 @@ class Cart {
   double totalPrice;
   bool isPaid;
   bool isDelivered;
+  String paymentMode, deliveryAddress;
 
   Cart({this.basketId, this.customer, this.basketDetails, this.totalPrice});
 
@@ -25,6 +26,8 @@ class Cart {
     totalPrice = json['TotalPrice'];
     isPaid = json['IsPaid'];
     isDelivered = json['IsDelivered'];
+    paymentMode = json['PaymentMode'] ?? "";
+    deliveryAddress = json['DeliveryAddress'] ?? "";
   }
 
   Map<String, dynamic> toJson() {

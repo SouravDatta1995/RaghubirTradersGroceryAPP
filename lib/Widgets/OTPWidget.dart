@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:raghuvir_traders/Elements/UserLogin.dart';
+import 'package:raghuvir_traders/Services/UserLoginService.dart';
 import 'package:sms_autofill/sms_autofill.dart';
 
 class OTPWidget extends StatefulWidget {
@@ -108,6 +109,7 @@ class _OTPWidgetState extends State<OTPWidget> {
                       ),
                       onTap: () {
                         setState(() {
+                          UserLoginService.sendOtp(widget.phoneNumber);
                           _resendStatus = false;
                         });
                       },

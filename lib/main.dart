@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:raghuvir_traders/NavigationPages/AdminHomePage.dart';
 import 'package:raghuvir_traders/NavigationPages/CartPage.dart';
 import 'package:raghuvir_traders/NavigationPages/CustomerHomePage..dart';
@@ -9,6 +10,9 @@ import 'package:raghuvir_traders/NavigationPages/OrderPage.dart';
 
 void main() {
   runApp(MyApp());
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent,
+  ));
 }
 
 class MyApp extends StatelessWidget {
