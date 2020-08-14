@@ -2,9 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:raghuvir_traders/Elements/AppDataBLoC.dart';
-import 'package:raghuvir_traders/Elements/Cart.dart';
 import 'package:raghuvir_traders/Elements/Product.dart';
-import 'package:raghuvir_traders/Services/CartManagementService.dart';
 import 'package:raghuvir_traders/Services/ProductManagementService.dart';
 import 'package:raghuvir_traders/Widgets/DrawerWidget.dart';
 import 'package:raghuvir_traders/Widgets/ProductItem.dart';
@@ -21,28 +19,15 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
   int _sortVal, _categoryVal;
   Future<List<Product>> _products;
   bool _searchFlag = false;
-  AppDataBLoC _bLoC;
   List<String> _categoryList;
   @override
   void initState() {
     _sortVal = 0;
     _categoryVal = 0;
     _products = ProductManagementService.getProducts(_categoryVal, _sortVal);
+
     _categoryList = AppDataBLoC.categoryList;
     _searchFlag = false;
-    CartManagementService.getLastCart(AppDataBLoC.data.id).then((value) {
-      Cart c = value.values.toList()[0];
-      _bLoC = AppDataBLoC(AppDataBLoC.data, c.basketId);
-      int count = 0;
-      AppDataBLoC.cart = c;
-      AppDataBLoC.appDataBLoC.cartStream.add(c);
-      if (AppDataBLoC.basketId != 0) {
-        AppDataBLoC.cart.basketDetails.forEach((element) {
-          count += element.quantity;
-        });
-      }
-      AppDataBLoC.appDataBLoC.cartNum.add(count);
-    });
     super.initState();
   }
 

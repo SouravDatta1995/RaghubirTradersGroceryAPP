@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:raghuvir_traders/Elements/AppDataBLoC.dart';
 import 'package:raghuvir_traders/Elements/UserLogin.dart';
+import 'package:raghuvir_traders/NavigationPages/AboutPage.dart';
 import 'package:raghuvir_traders/NavigationPages/CartPage.dart';
 import 'package:raghuvir_traders/NavigationPages/CustomerHomePage..dart';
+import 'package:raghuvir_traders/NavigationPages/CustomerOrderHistory.dart';
 
 class DrawerWidget extends StatefulWidget {
   final String currentPage;
@@ -26,6 +28,31 @@ class _DrawerWidgetState extends State<DrawerWidget> {
               child: Stack(
                 children: [
                   Container(
+                    child: Column(
+                      children: [
+                        Expanded(
+                          flex: 4,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "R",
+                                style: TextStyle(
+                                    fontSize: 48, color: Colors.white),
+                              ),
+                              Text(
+                                "\nT",
+                                style: TextStyle(
+                                    fontSize: 48, color: Colors.white),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(),
+                        ),
+                      ],
+                    ),
                     color: Colors.blueAccent,
                   ),
                   Padding(
@@ -56,7 +83,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             ),
           ),
           Expanded(
-            flex: 8,
+            flex: 7,
             child: ListView(
               children: <Widget>[
                 ListTile(
@@ -85,15 +112,31 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                 ListTile(
                   title: Text("Orders"),
                   onTap: () {
-                    setState(() {});
+                    setState(() {
+                      Navigator.pop(context);
+                      if (widget.currentPage != "Order") {
+                        Navigator.pushNamed(context, CustomerOrderHistory.id);
+                      }
+                    });
                   },
                 ),
                 ListTile(
-                  title: Text("About us"),
+                  title: Text("About this app"),
                   onTap: () {
-                    setState(() {});
+                    setState(() {
+                      Navigator.pushNamed(context, AboutPage.id);
+                    });
                   },
                 ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text("Powered by : Mukherjee Solutions"),
+                Text("Contact : 7059249929"),
               ],
             ),
           ),

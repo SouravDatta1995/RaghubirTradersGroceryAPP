@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:raghuvir_traders/Elements/UserLogin.dart';
+import 'package:raghuvir_traders/Services/UserLoginService.dart';
 import 'package:sms_autofill/sms_autofill.dart';
 
 class OTPWidget extends StatefulWidget {
@@ -13,7 +14,7 @@ class OTPWidget extends StatefulWidget {
 
 class _OTPWidgetState extends State<OTPWidget> {
   String _otpCode;
-  bool _isAutoFill, _resendStatus;
+  bool _isAutoFill, _resendStatus, _validOtp;
   _getSignature() async {
     String signature = await SmsAutoFill().getAppSignature;
     print("Signature : " + signature);
@@ -32,7 +33,8 @@ class _OTPWidgetState extends State<OTPWidget> {
     _isAutoFill = false;
     _resendStatus = false;
     _loginLoad = true;
-    _getSignature();
+    _validOtp = true;
+//    _getSignature();
   }
 
   @override
@@ -72,6 +74,15 @@ class _OTPWidgetState extends State<OTPWidget> {
         SizedBox(
           height: 20,
         ),
+        _validOtp
+            ? Container(
+                height: 0.0,
+                width: 0.0,
+              )
+            : Text(
+                "Invalid Otp",
+                style: TextStyle(color: Colors.red),
+              ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: PinFieldAutoFill(
@@ -113,6 +124,7 @@ class _OTPWidgetState extends State<OTPWidget> {
                       ),
                       onTap: () {
                         setState(() {
+                          UserLoginService.sendOtp(widget.phoneNumber);
                           _resendStatus = false;
                         });
                       },
@@ -163,17 +175,21 @@ class _OTPWidgetState extends State<OTPWidget> {
             child: _loginLoad
                 ? FutureBuilder<Map<String, dynamic>>(
                     //TODO : Update to getUserLoginViaOtp for otp validation
-                    future: UserLogin.getUserLoginViaOtp(
-                        context, widget.phoneNumber, _otpCode),
+                    future: UserLogin.getUserLogin(context, widget.phoneNumber),
                     builder: (context, snapshot) {
-                      return Container(
-                        height: 15.0,
-                        width: 15.0,
-                        child: CircularProgressIndicator(
-                          backgroundColor: Colors.white,
-                          strokeWidth: 2.0,
-                        ),
-                      );
+                      if (!snapshot.hasData)
+                        return Container(
+                          height: 15.0,
+                          width: 15.0,
+                          child: CircularProgressIndicator(
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.white),
+                            strokeWidth: 2.0,
+                          ),
+                        );
+                      else {
+                        return Text("Submit");
+                      }
                     },
                   )
                 : Text("Submit"),

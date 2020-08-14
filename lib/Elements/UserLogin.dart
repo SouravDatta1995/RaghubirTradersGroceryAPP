@@ -23,9 +23,11 @@ class UserLogin {
       if (_userType == "Existing User") {
         setCachePhoneNumber(int.parse(phoneNumber));
         AppDataBLoC.data = _userData;
-        Navigator.pop(context);
-        Navigator.pushNamedAndRemoveUntil(
-            context, CustomerHomePage.id, (route) => false);
+        AppDataBLoC.setLastCart().then((value) {
+          Navigator.pop(context);
+          Navigator.pushNamedAndRemoveUntil(
+              context, CustomerHomePage.id, (route) => false);
+        });
       } else if (_userType == "New User") {
         Navigator.pushNamedAndRemoveUntil(
           context,
@@ -57,7 +59,7 @@ class UserLogin {
         Navigator.pushNamedAndRemoveUntil(
           context,
           NewUser.id,
-          ModalRoute.withName(NewUser.id),
+          (route) => false,
           arguments: phoneNumber,
         );
       } else {

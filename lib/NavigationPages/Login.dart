@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:raghuvir_traders/Elements/UserLogin.dart';
-import 'package:raghuvir_traders/Services/UserLoginService.dart';
 import 'package:raghuvir_traders/Widgets/AdminLoginWidget.dart';
 import 'package:raghuvir_traders/Widgets/OTPWidget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -57,7 +56,9 @@ class _LoginState extends State<Login> {
                   child: Container(
                     height: 60,
                     width: 60,
-                    child: CircularProgressIndicator(),
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
                   ),
                 );
               else if (snapshot.data != 0)
@@ -65,7 +66,9 @@ class _LoginState extends State<Login> {
                   child: Container(
                     height: 60,
                     width: 60,
-                    child: CircularProgressIndicator(),
+                    child: CircularProgressIndicator(
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(Colors.white)),
                   ),
                 );
               else
@@ -77,7 +80,34 @@ class _LoginState extends State<Login> {
                     children: <Widget>[
                       Expanded(
                         flex: 2,
-                        child: Center(child: Text("RAGHUVIR TRADERS")),
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "R",
+                                    style: TextStyle(
+                                        fontSize: 72, color: Colors.white),
+                                  ),
+                                  Text(
+                                    "\nT",
+                                    style: TextStyle(
+                                        fontSize: 72, color: Colors.white),
+                                  ),
+                                ],
+                              ),
+                              Center(
+                                child: Text(
+                                  "Raghuvir Traders",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
                       ),
                       _customerLogin(),
                       Expanded(
@@ -111,6 +141,7 @@ class _LoginState extends State<Login> {
                   prefix: Text('+91  '),
                 ),
                 inputFormatters: [LengthLimitingTextInputFormatter(10)],
+                keyboardType: TextInputType.number,
                 onChanged: (value) {
                   _phoneNumber = value;
                 },
@@ -121,7 +152,7 @@ class _LoginState extends State<Login> {
               RaisedButton(
                 onPressed: () {
 //                  TODO : Uncomment for otp
-                  UserLoginService.sendOtp(_phoneNumber);
+//                  UserLoginService.sendOtp(_phoneNumber);
                   _showOTPDialog();
                 },
                 color: Colors.blueAccent,

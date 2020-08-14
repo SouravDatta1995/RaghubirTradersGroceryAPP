@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:raghuvir_traders/NavigationPages/AdminForgotPassword.dart';
 import 'package:raghuvir_traders/NavigationPages/AdminHomePage.dart';
+import 'package:raghuvir_traders/Services/AdminLogin.dart';
 
 class AdminLoginWidget extends StatefulWidget {
   @override
@@ -8,6 +10,16 @@ class AdminLoginWidget extends StatefulWidget {
 }
 
 class _AdminLoginWidgetState extends State<AdminLoginWidget> {
+  String _uName, _pass;
+  bool _incorrectPassword;
+  @override
+  void initState() {
+    _incorrectPassword = false;
+    _uName = "";
+    _pass = "";
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
@@ -23,8 +35,22 @@ class _AdminLoginWidgetState extends State<AdminLoginWidget> {
           ),
         ),
       ),
-      titlePadding: EdgeInsets.only(bottom: 16.0),
+      titlePadding: EdgeInsets.zero,
       children: <Widget>[
+        _incorrectPassword
+            ? Container(
+                height: 18.0,
+                child: Center(
+                  child: Text(
+                    "Incorrect username/password",
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
+              )
+            : Container(
+                height: 18,
+                width: 0,
+              ),
         Container(
           height: 48.0,
           child: TextField(
@@ -32,6 +58,9 @@ class _AdminLoginWidgetState extends State<AdminLoginWidget> {
               contentPadding: EdgeInsets.all(5.0),
               labelText: "Enter Username",
             ),
+            onChanged: (value) {
+              _uName = value;
+            },
           ),
         ),
         SizedBox(
@@ -40,10 +69,14 @@ class _AdminLoginWidgetState extends State<AdminLoginWidget> {
         Container(
           height: 48.0,
           child: TextField(
+            obscureText: true,
             decoration: InputDecoration(
               contentPadding: EdgeInsets.all(5.0),
               labelText: "Enter Password",
             ),
+            onChanged: (value) {
+              _pass = value;
+            },
           ),
         ),
         SizedBox(
@@ -53,11 +86,32 @@ class _AdminLoginWidgetState extends State<AdminLoginWidget> {
           alignment: MainAxisAlignment.spaceBetween,
           buttonPadding: EdgeInsets.symmetric(vertical: 8.0),
           children: <Widget>[
-            Text("Forgot Password"),
+            GestureDetector(
+              excludeFromSemantics: false,
+              onTap: () {
+                Navigator.pushNamed(context, AdminForgotPassword.id);
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  "Forgot Password",
+                  style: TextStyle(color: Colors.blue),
+                ),
+              ),
+            ),
             RaisedButton(
               onPressed: () {
-                Navigator.pushNamedAndRemoveUntil(context, AdminHomePage.id,
-                    ModalRoute.withName(AdminHomePage.id));
+                FocusScope.of(context).unfocus();
+                AdminLogin.adminLogin(_uName, _pass).then((value) {
+                  if (value == "Success") {
+                    Navigator.pushNamedAndRemoveUntil(
+                        context, AdminHomePage.id, (route) => false);
+                  } else {
+                    setState(() {
+                      _incorrectPassword = true;
+                    });
+                  }
+                });
               },
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),

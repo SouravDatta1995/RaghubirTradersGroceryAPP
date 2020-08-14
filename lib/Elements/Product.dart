@@ -9,7 +9,7 @@ class Product {
       : this.productId = json['productId'],
         this.name = json['Name'],
         this.price = json['BasePrice'],
-        this.category = json['Category'],
+        this.category = json['Category'] ?? "0",
         this.logo = json['Image'] ??
             'https://freeiconshop.com/wp-content/uploads/edd/apple-outline-filled.png';
 

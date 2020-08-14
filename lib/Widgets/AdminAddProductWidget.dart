@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:raghuvir_traders/Elements/AppDataBLoC.dart';
@@ -19,6 +20,7 @@ class _AdminAddProductWidgetState extends State<AdminAddProductWidget> {
   bool _saveButtonState = false;
   int _categoryVal;
   List<String> _categoryList;
+  final _formKey = GlobalKey<FormState>();
   Future getImage() async {
     final pickedFile = await picker.getImage(
       source: ImageSource.gallery,
@@ -40,6 +42,8 @@ class _AdminAddProductWidgetState extends State<AdminAddProductWidget> {
 
   @override
   void initState() {
+    _productName = "";
+    _productPrice = "";
     _categoryList = AppDataBLoC.categoryList.sublist(1);
     _categoryVal = 1;
     super.initState();
@@ -52,7 +56,7 @@ class _AdminAddProductWidgetState extends State<AdminAddProductWidget> {
           EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: SingleChildScrollView(
         child: Form(
-          autovalidate: true,
+          key: _formKey,
           child: Container(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -86,8 +90,15 @@ class _AdminAddProductWidgetState extends State<AdminAddProductWidget> {
                       Expanded(
                         child: TextFormField(
                           onChanged: (value) => _productName = value,
-                          decoration:
-                              InputDecoration(labelText: "Enter Product Name"),
+                          decoration: InputDecoration(
+                            labelText: "Enter Product Name",
+                          ),
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'Please enter a Product Name';
+                            }
+                            return null;
+                          },
                         ),
                       ),
                     ],
@@ -98,6 +109,12 @@ class _AdminAddProductWidgetState extends State<AdminAddProductWidget> {
                       labelText: "Price",
                       prefix: Text("Rs. "),
                     ),
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return 'Please enter a Price';
+                      }
+                      return null;
+                    },
                     keyboardType:
                         TextInputType.numberWithOptions(decimal: true),
                   ),
@@ -133,7 +150,9 @@ class _AdminAddProductWidgetState extends State<AdminAddProductWidget> {
                     alignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       RaisedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          _formKey.currentState.reset();
+                        },
                         child: Center(
                           child: Text(
                             "RESET",
@@ -143,9 +162,11 @@ class _AdminAddProductWidgetState extends State<AdminAddProductWidget> {
                       ),
                       RaisedButton(
                         onPressed: () {
-                          setState(() {
-                            _saveButtonState = true;
-                          });
+                          if (_formKey.currentState.validate()) {
+                            setState(() {
+                              _saveButtonState = true;
+                            });
+                          }
                         },
                         child: Center(
                           child: _saveButtonState == false
