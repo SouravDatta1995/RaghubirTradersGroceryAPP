@@ -22,7 +22,7 @@ class UserLoginService {
     final response =
         await http.post('http://15.207.50.9:8082/users/SendOtp/$phoneNumber');
     if (response.statusCode == 202) {
-      print(jsonDecode(response.body));
+      //print(jsonDecode(response.body));
       return "Success";
     } else {
       return "Error";

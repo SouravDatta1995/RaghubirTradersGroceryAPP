@@ -115,14 +115,14 @@ class _AdminForgotPasswordState extends State<AdminForgotPassword> {
                                   _uName, _secretAnswer, _newPass)
                               .then((value) {
                             if (value == "Success") {
-                              print("Success");
+                              //print("Success");
 
                               Navigator.pushNamedAndRemoveUntil(
                                   context, AdminHomePage.id, (route) => false);
                             } else {
                               Scaffold.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text("Some Error Occurred"),
+                                  content: Text("Incorrect Security Answer"),
                                 ),
                               );
                             }

@@ -24,6 +24,8 @@ class _AdminAddProductWidgetState extends State<AdminAddProductWidget> {
   Future getImage() async {
     final pickedFile = await picker.getImage(
       source: ImageSource.gallery,
+      maxHeight: 512,
+      maxWidth: 512,
     );
     _image = await ImageCropper.cropImage(
       sourcePath: pickedFile.path,

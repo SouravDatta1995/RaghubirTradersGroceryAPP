@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 
 class AdminLogin {
   static Future<String> adminLogin(String uName, String pass) async {
-    print("Details" + uName + pass);
+    //print("Details" + uName + pass);
     final response = await http.post(
       "http://15.207.50.9:8082/admin/Get/$uName/$pass",
       headers: <String, String>{
@@ -35,7 +35,7 @@ class AdminLogin {
 
   static Future<String> resetPassword(
       String uName, String secretAnswer, String newPass) async {
-    print("Details: " + uName + secretAnswer + newPass);
+    //print("Details: " + uName + secretAnswer + newPass);
     final response = await http.post(
       "http://15.207.50.9:8082/admin/ResetPassword/",
       headers: <String, String>{

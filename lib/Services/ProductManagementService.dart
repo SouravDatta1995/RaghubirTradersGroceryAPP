@@ -68,7 +68,7 @@ class ProductManagementService {
         "\"Category\":\"" +
         category +
         "\"}";
-    print("Data: " + data);
+    //print("Data: " + data);
     var dio = Dio();
     FormData formData = FormData.fromMap({'product': data});
     if (fileName != "")
@@ -81,7 +81,7 @@ class ProductManagementService {
       data: formData,
     );
     if (response.statusCode == 201) {
-      print("Product Added");
+      //print("Product Added");
       return "Product Update Successful";
     } else {
       //debugPrint("Product Add unsuccessful");

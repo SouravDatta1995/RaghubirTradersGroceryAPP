@@ -6,10 +6,10 @@ import 'package:raghuvir_traders/Elements/AppDataBLoC.dart';
 import 'package:raghuvir_traders/Elements/Cart.dart';
 import 'package:raghuvir_traders/Elements/RazorPayOptions.dart';
 import 'package:raghuvir_traders/NavigationPages/CustomerOrderHistory.dart';
+import 'package:raghuvir_traders/Services/ApplicationUrlService.dart';
 import 'package:raghuvir_traders/Services/CartManagementService.dart';
 import 'package:raghuvir_traders/Services/OrderManagementService.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class OrderPage extends StatefulWidget {
   static String id = "Order";
@@ -111,6 +111,36 @@ class _OrderPageState extends State<OrderPage> {
             ),
             Row(
               children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 16.0),
+                  child: Column(
+                    children: [
+                      Checkbox(
+                        value: _sameAddress,
+                        materialTapTargetSize: MaterialTapTargetSize.padded,
+                        onChanged: (value) {
+                          setState(() {
+                            _sameAddress = !_sameAddress;
+                          });
+                          if (value) {
+                            _textEditingController.text =
+                                AppDataBLoC.data.address;
+                            AppDataBLoC.deliveryAddress =
+                                AppDataBLoC.data.address;
+                          } else {
+                            _textEditingController.text = "";
+                            AppDataBLoC.deliveryAddress = "";
+                          }
+                        },
+                      ),
+                      Text(
+                        "Same as\nabove",
+                        style: TextStyle(fontSize: 12.0),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
                 Expanded(
                   flex: 3,
                   child: Padding(
@@ -121,6 +151,7 @@ class _OrderPageState extends State<OrderPage> {
                       },
                       controller: _textEditingController,
                       enabled: !_sameAddress,
+                      maxLines: null,
                       decoration:
                           InputDecoration(labelText: "Delivery Address"),
                     ),
@@ -141,32 +172,6 @@ class _OrderPageState extends State<OrderPage> {
                       ],
                     ),
                   ),
-                ),
-                Column(
-                  children: [
-                    Checkbox(
-                      value: _sameAddress,
-                      onChanged: (value) {
-                        setState(() {
-                          _sameAddress = !_sameAddress;
-                        });
-                        if (value) {
-                          _textEditingController.text =
-                              AppDataBLoC.data.address;
-                          AppDataBLoC.deliveryAddress =
-                              AppDataBLoC.data.address;
-                        } else {
-                          _textEditingController.text = "";
-                          AppDataBLoC.deliveryAddress = "";
-                        }
-                      },
-                    ),
-                    Text(
-                      "Same as\nabove",
-                      style: TextStyle(fontSize: 12.0),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
                 ),
               ],
             ),
@@ -379,31 +384,7 @@ class _PaymentSelectorCardState extends State<PaymentSelectorCard> {
       } else
         print("Error");
     });
-    print("Wallet");
-  }
-
-  void launchWhatsApp({String phone, String message}) async {
-    String url() {
-      return "whatsapp://send?phone=$phone";
-    }
-
-    if (await canLaunch(url())) {
-      await launch(url());
-    } else {
-      throw 'Could not launch ${url()}';
-    }
-  }
-
-  void launchPhone({String phoneNumber}) async {
-    String url() {
-      return "tel:$phoneNumber";
-    }
-
-    if (await canLaunch(url())) {
-      await launch(url());
-    } else {
-      throw 'Could not launch ${url()}';
-    }
+    //print("Wallet");
   }
 
   @override
@@ -488,20 +469,24 @@ class _PaymentSelectorCardState extends State<PaymentSelectorCard> {
                           if (AppDataBLoC.deliveryAddress == "") {
                             Scaffold.of(context).showSnackBar(SnackBar(
                               content: Text("Please Enter delivery address"),
+                              duration: Duration(seconds: 1),
                             ));
                           } else if (AppDataBLoC.pin == 0 ||
                               AppDataBLoC.pin == null) {
                             Scaffold.of(context).showSnackBar(SnackBar(
                               content: Text("Please Enter Pin Code"),
+                              duration: Duration(seconds: 1),
                             ));
                           } else if (AppDataBLoC.pin < 100000) {
                             Scaffold.of(context).showSnackBar(SnackBar(
                               content: Text("Pin Code not valid"),
+                              duration: Duration(seconds: 1),
                             ));
                           } else if (AppDataBLoC.pin != 700104 &&
                               AppDataBLoC.pin != 700063) {
                             Scaffold.of(context).showSnackBar(SnackBar(
                               content: Text("Area Not Deliverable"),
+                              duration: Duration(seconds: 1),
                             ));
                           } else {
                             OrderManagementService.initiateCheckout(
@@ -525,8 +510,9 @@ class _PaymentSelectorCardState extends State<PaymentSelectorCard> {
                                             context,
                                             CustomerOrderHistory.id,
                                             (route) => false));
-                                  } else
+                                  } else {
                                     print("Error");
+                                  }
                                 });
                             });
                           }
@@ -535,20 +521,24 @@ class _PaymentSelectorCardState extends State<PaymentSelectorCard> {
                           if (AppDataBLoC.deliveryAddress == "") {
                             Scaffold.of(context).showSnackBar(SnackBar(
                               content: Text("Please Enter delivery address"),
+                              duration: Duration(seconds: 1),
                             ));
                           } else if (AppDataBLoC.pin == 0 ||
                               AppDataBLoC.pin == null) {
                             Scaffold.of(context).showSnackBar(SnackBar(
                               content: Text("Please Enter Pin Code"),
+                              duration: Duration(seconds: 1),
                             ));
                           } else if (AppDataBLoC.pin < 100000) {
                             Scaffold.of(context).showSnackBar(SnackBar(
                               content: Text("Pin Code not valid"),
+                              duration: Duration(seconds: 1),
                             ));
                           } else if (AppDataBLoC.pin != 700104 &&
                               AppDataBLoC.pin != 700063) {
                             Scaffold.of(context).showSnackBar(SnackBar(
                               content: Text("Area Not Deliverable"),
+                              duration: Duration(seconds: 1),
                             ));
                           } else {
                             OrderManagementService.initiateCheckout(
@@ -561,7 +551,7 @@ class _PaymentSelectorCardState extends State<PaymentSelectorCard> {
                                 .then((value) {
                               if (value.keys.toList()[0] == "Success") {
                                 RazorPayOptions rpo = value.values.toList()[0];
-                                print(rpo.amount.toString());
+                                //print(rpo.amount.toString());
                                 var options = {
                                   'key': 'rzp_test_pgmDCnUN2PTsMK',
                                   'amount': rpo.amount,
@@ -587,7 +577,7 @@ class _PaymentSelectorCardState extends State<PaymentSelectorCard> {
             FloatingActionButton(
               heroTag: null,
               onPressed: () {
-                launchPhone(phoneNumber: "9477014134");
+                ApplicationUrlService.launchPhone(phoneNumber: "9477014134");
               },
               child: Icon(MdiIcons.phone),
               backgroundColor: Colors.blueAccent,
@@ -595,7 +585,7 @@ class _PaymentSelectorCardState extends State<PaymentSelectorCard> {
             FloatingActionButton(
               heroTag: null,
               onPressed: () {
-                launchWhatsApp(phone: "+919477014134");
+                ApplicationUrlService.launchWhatsApp(phone: "+919477014134");
               },
               child: Icon(MdiIcons.whatsapp),
               backgroundColor: Colors.blueAccent,

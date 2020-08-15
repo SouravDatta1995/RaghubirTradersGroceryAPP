@@ -55,6 +55,7 @@ class _AboutPageState extends State<AboutPage> {
                   Center(child: Text("geolocator: ^5.3.2+2")),
                   Center(child: Text("razorpay_flutter: ^1.2.2")),
                   Center(child: Text("url_launcher: ^5.5.0")),
+                  Center(child: Text("android_intent: ^0.3.6+12")),
                 ],
               ),
             ),
