@@ -68,6 +68,7 @@ class _CartPageState extends State<CartPage> {
               color: Colors.white,
             ),
             GestureDetector(
+              excludeFromSemantics: false,
               onTap: () => Navigator.popUntil(
                   context, ModalRoute.withName(CustomerHomePage.id)),
               child: Icon(

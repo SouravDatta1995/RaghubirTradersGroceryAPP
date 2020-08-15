@@ -1,7 +1,9 @@
+import 'package:android_intent/android_intent.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:raghuvir_traders/Elements/AppDataBLoC.dart';
+import 'package:raghuvir_traders/Elements/UserLogin.dart';
 import 'package:raghuvir_traders/NavigationPages/CustomerHomePage..dart';
 import 'package:raghuvir_traders/Services/UserLoginService.dart';
 
@@ -25,8 +27,45 @@ class _NewUserState extends State<NewUser> {
     super.initState();
   }
 
+  Future _gpsService() async {
+    if (!(await Geolocator().isLocationServiceEnabled())) {
+      _checkGps();
+      return null;
+    } else
+      return true;
+  }
+
+  Future _checkGps() async {
+    if (!(await Geolocator().isLocationServiceEnabled())) {
+      if (Theme.of(context).platform == TargetPlatform.android) {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text("Can't get gurrent location"),
+                content:
+                    const Text('Please make sure you enable GPS and try again'),
+                actions: <Widget>[
+                  FlatButton(
+                      child: Text('Ok'),
+                      onPressed: () {
+                        final AndroidIntent intent = AndroidIntent(
+                            action:
+                                'android.settings.LOCATION_SOURCE_SETTINGS');
+                        intent.launch();
+                        Navigator.of(context, rootNavigator: true).pop();
+                        _gpsService();
+                      })
+                ],
+              );
+            });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    _checkGps();
     final String phoneNumber = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       body: Padding(
@@ -109,7 +148,9 @@ class _NewUserState extends State<NewUser> {
         onPressed: () async {
           FocusScope.of(context).unfocus();
 
-          if (_fName == "" || _lName == "" || _address == "")
+          if (_fName == "" ||
+              _lName == "" ||
+              (_address + _additionalAddress) == "")
             Scaffold.of(context).showSnackBar(SnackBar(
               content: Text("Please fill all the fields"),
             ));
@@ -133,8 +174,11 @@ class _NewUserState extends State<NewUser> {
                     .then((value) {
                   if (value.keys.toList()[0] == "User")
                     AppDataBLoC.data = value.values.toList()[0];
-                  Navigator.pushNamedAndRemoveUntil(
-                      context, CustomerHomePage.id, (route) => false);
+                  AppDataBLoC.setLastCart().then((value) {
+                    UserLogin.setCachePhoneNumber(int.parse(phoneNumber));
+                    Navigator.pushNamedAndRemoveUntil(
+                        context, CustomerHomePage.id, (route) => false);
+                  });
                   return value;
                 }),
                 builder: (context, snapshot) => Padding(

@@ -74,7 +74,7 @@ class AppDataBLoC {
           CartManagementService.updateCart(newCart).then((value) {
             if (value.keys.toList()[0] == "Success") {
               cart = value.values.toList()[0];
-              print(cart.basketId.toString());
+              //print(cart.basketId.toString());
               cartNum.add(1);
               cartStream.add(cart);
             }
@@ -87,7 +87,7 @@ class AppDataBLoC {
           CartManagementService.updateCart(newCart).then((value) {
             if (value.keys.toList()[0] == "Success") {
               cart = value.values.toList()[0];
-              print(cart.basketId.toString());
+              //print(cart.basketId.toString());
               cartNum.add(1);
               cartStream.add(cart);
             }
@@ -122,6 +122,7 @@ class AppDataBLoC {
         Cart c = value.values.toList()[0];
         AppDataBLoC.basketId = 0;
         AppDataBLoC.cart = c;
+        //print(c.toJson().toString());
         AppDataBLoC.appDataBLoC.cartStream.add(c);
         AppDataBLoC.appDataBLoC.cartNum.add(0);
       }

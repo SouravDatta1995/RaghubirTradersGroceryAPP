@@ -128,6 +128,7 @@ class _OTPWidgetState extends State<OTPWidget> {
                           _resendStatus = false;
                         });
                       },
+                      excludeFromSemantics: false,
                     )
                   : TweenAnimationBuilder(
                       tween: Tween(

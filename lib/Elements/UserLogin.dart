@@ -19,7 +19,7 @@ class UserLogin {
     return UserLoginService.loginUser(phoneNumber).then((value) {
       String _userType = value.keys.toList()[0];
       UserData _userData = value.values.toList()[0];
-      print("UserType:" + _userType);
+      //print("UserType:" + _userType);
       if (_userType == "Existing User") {
         setCachePhoneNumber(int.parse(phoneNumber));
         AppDataBLoC.data = _userData;
@@ -29,12 +29,9 @@ class UserLogin {
               context, CustomerHomePage.id, (route) => false);
         });
       } else if (_userType == "New User") {
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          NewUser.id,
-          ModalRoute.withName(NewUser.id),
-          arguments: phoneNumber,
-        );
+        Navigator.pop(context);
+        Navigator.pushNamedAndRemoveUntil(context, NewUser.id, (route) => false,
+            arguments: phoneNumber);
       } else {
         return {"Error:": "Some Error Occurred"};
       }
@@ -48,7 +45,7 @@ class UserLogin {
     return UserLoginService.validateOtp(phoneNumber, otp).then((value) {
       String _userType = value.keys.toList()[0];
       UserData _userData = value.values.toList()[0];
-      print("UserType:" + _userType);
+      //print("UserType:" + _userType);
       if (_userType == "Existing User") {
         setCachePhoneNumber(int.parse(phoneNumber));
         AppDataBLoC.data = _userData;

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:raghuvir_traders/Elements/AppDataBLoC.dart';
 import 'package:raghuvir_traders/Elements/Cart.dart';
 import 'package:raghuvir_traders/NavigationPages/CustomerHomePage..dart';
+import 'package:raghuvir_traders/Services/ApplicationUrlService.dart';
 import 'package:raghuvir_traders/Services/OrderHistoryService.dart';
 import 'package:raghuvir_traders/Widgets/DrawerWidget.dart';
 
@@ -13,6 +15,39 @@ class CustomerOrderHistory extends StatefulWidget {
 }
 
 class _CustomerOrderHistoryState extends State<CustomerOrderHistory> {
+  ScrollController _scrollController =
+      ScrollController(); // set controller on scrolling
+  bool _show = true;
+
+  void handleScroll() async {
+    _scrollController.addListener(() {
+      if (_scrollController.position.userScrollDirection ==
+          ScrollDirection.reverse) {
+        setState(() {
+          if (_show == true) _show = false;
+        });
+      }
+      if (_scrollController.position.userScrollDirection ==
+          ScrollDirection.forward) {
+        setState(() {
+          if (_show == false) _show = true;
+        });
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    handleScroll();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(() {});
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,12 +73,41 @@ class _CustomerOrderHistoryState extends State<CustomerOrderHistory> {
           ),
         ],
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: Visibility(
+        visible: _show,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            FloatingActionButton(
+              heroTag: "phoneIcon",
+              onPressed: () {
+                ApplicationUrlService.launchPhone(phoneNumber: "9477014134");
+              },
+              child: Icon(MdiIcons.phone),
+              backgroundColor: Colors.blueAccent,
+            ),
+            SizedBox(
+              width: 16.0,
+            ),
+            FloatingActionButton(
+              heroTag: "waIcon",
+              onPressed: () {
+                ApplicationUrlService.launchWhatsApp(phone: "+919477014134");
+              },
+              child: Icon(MdiIcons.whatsapp),
+              backgroundColor: Colors.blueAccent,
+            ),
+          ],
+        ),
+      ),
       body: FutureBuilder<List<Cart>>(
         future: OrderHistoryService.getLastOrder(AppDataBLoC.data.id),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             if (snapshot.data.length > 0)
               return ListView.builder(
+                controller: _scrollController,
                 itemCount: snapshot.data.length,
                 itemBuilder: (context, index) {
                   Cart c = snapshot.data[index];
@@ -100,6 +164,7 @@ class _CustomerOrderHistoryState extends State<CustomerOrderHistory> {
                         ),
                       );
                   });
+
                   return Card(
                     child: ExpansionTile(
                       tilePadding: EdgeInsets.all(16.0),
