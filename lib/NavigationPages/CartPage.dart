@@ -48,9 +48,9 @@ class _CartPageState extends State<CartPage> {
 
   Widget _cartAppBar() {
     return AppBar(
-      backgroundColor: Colors.white,
+      backgroundColor: AppDataBLoC.primaryColor,
       elevation: 4.0,
-      iconTheme: IconThemeData(color: Colors.black),
+      iconTheme: IconThemeData(color: AppDataBLoC.secondaryColor),
       title: Center(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -59,21 +59,20 @@ class _CartPageState extends State<CartPage> {
               child: Center(
                 child: Text(
                   "Cart",
-                  style: TextStyle(color: Colors.black),
+                  style: TextStyle(color: AppDataBLoC.secondaryColor),
                 ),
               ),
             ),
-            Icon(
-              MdiIcons.nullIcon,
-              color: Colors.white,
-            ),
             GestureDetector(
               excludeFromSemantics: false,
-              onTap: () => Navigator.popUntil(
-                  context, ModalRoute.withName(CustomerHomePage.id)),
-              child: Icon(
-                MdiIcons.close,
-                color: Colors.black,
+              onTap: () => Navigator.pushNamedAndRemoveUntil(
+                  context, CustomerHomePage.id, (route) => false),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Icon(
+                  MdiIcons.close,
+                  color: AppDataBLoC.secondaryColor,
+                ),
               ),
             ),
           ],
@@ -85,7 +84,10 @@ class _CartPageState extends State<CartPage> {
   Widget _cartBody() {
     return _products == null
         ? Center(
-            child: CircularProgressIndicator(),
+            child: CircularProgressIndicator(
+              valueColor:
+                  AlwaysStoppedAnimation<Color>(AppDataBLoC.primaryColor),
+            ),
           )
         : _products.length > 0
             ? Column(
@@ -109,7 +111,7 @@ class _CartPageState extends State<CartPage> {
                       Navigator.pushNamed(context, OrderPage.id);
                     },
                     child: Container(
-                      color: Colors.blueAccent,
+                      color: AppDataBLoC.primaryColor,
                       height: 60,
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
@@ -119,7 +121,8 @@ class _CartPageState extends State<CartPage> {
                             Expanded(
                               child: Text(
                                 "Tap to order",
-                                style: TextStyle(color: Colors.white),
+                                style: TextStyle(
+                                    color: AppDataBLoC.secondaryColor),
                               ),
                             ),
                             Expanded(
@@ -131,7 +134,7 @@ class _CartPageState extends State<CartPage> {
                                         "Rs. " +
                                             snapshot.data.totalPrice.toString(),
                                         style: TextStyle(
-                                          color: Colors.white,
+                                          color: AppDataBLoC.secondaryColor,
                                         ),
                                         textAlign: TextAlign.right,
                                       )
@@ -141,7 +144,7 @@ class _CartPageState extends State<CartPage> {
                             Icon(
                               MdiIcons.arrowRight,
                               size: 20.0,
-                              color: Colors.white,
+                              color: AppDataBLoC.secondaryColor,
                             ),
                           ],
                         ),

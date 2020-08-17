@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:raghuvir_traders/Elements/AppDataBLoC.dart';
 import 'package:raghuvir_traders/NavigationPages/AboutPage.dart';
 import 'package:raghuvir_traders/NavigationPages/AdminForgotPassword.dart';
 import 'package:raghuvir_traders/NavigationPages/AdminHomePage.dart';
@@ -8,13 +9,12 @@ import 'package:raghuvir_traders/NavigationPages/CustomerHomePage..dart';
 import 'package:raghuvir_traders/NavigationPages/CustomerOrderHistory.dart';
 import 'package:raghuvir_traders/NavigationPages/Login.dart';
 import 'package:raghuvir_traders/NavigationPages/NewUser.dart';
+import 'package:raghuvir_traders/NavigationPages/OrderMedicinePage.dart';
 import 'package:raghuvir_traders/NavigationPages/OrderPage.dart';
 
 void main() {
   runApp(MyApp());
-  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-    statusBarColor: Colors.blueAccent,
-  ));
+  SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
 }
 
 class MyApp extends StatelessWidget {
@@ -23,8 +23,15 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'RAGHUVIR TRADERS GROCERY APP',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primaryColor: AppDataBLoC.primaryColor,
+        accentColor: AppDataBLoC.primaryColor,
+        cardColor: AppDataBLoC.secondaryColor,
+        canvasColor: AppDataBLoC.secondaryColor,
+        backgroundColor: AppDataBLoC.secondaryColor,
+        cursorColor: AppDataBLoC.primaryColor,
         visualDensity: VisualDensity.adaptivePlatformDensity,
+        floatingActionButtonTheme: FloatingActionButtonThemeData(
+            backgroundColor: AppDataBLoC.primaryColor),
       ),
       routes: {
         '/': (context) => Login(),
@@ -36,6 +43,7 @@ class MyApp extends StatelessWidget {
         CustomerOrderHistory.id: (context) => CustomerOrderHistory(),
         AdminForgotPassword.id: (context) => AdminForgotPassword(),
         AboutPage.id: (context) => AboutPage(),
+        OrderMedicinePage.id: (context) => OrderMedicinePage(),
       },
     );
   }

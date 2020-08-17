@@ -40,7 +40,7 @@ class _NewUserState extends State<NewUser> {
       if (Theme.of(context).platform == TargetPlatform.android) {
         showDialog(
             context: context,
-            builder: (BuildContext context) {
+            builder: (BuildContext dialogContext) {
               return AlertDialog(
                 title: Text("Can't get gurrent location"),
                 content:
@@ -79,7 +79,7 @@ class _NewUserState extends State<NewUser> {
               child: Text(
                 "Welcome",
                 style: TextStyle(
-                    color: Colors.blueAccent,
+                    color: AppDataBLoC.primaryColor,
                     fontSize: 36,
                     fontWeight: FontWeight.bold),
               ),
@@ -160,11 +160,11 @@ class _NewUserState extends State<NewUser> {
             });
           }
         },
-        color: Colors.blueAccent,
+        color: AppDataBLoC.primaryColor,
         child: _newUserLoad == false
             ? Text(
                 "Continue",
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: AppDataBLoC.secondaryColor),
               )
             : FutureBuilder(
                 future: UserLoginService.addUser(
@@ -183,7 +183,10 @@ class _NewUserState extends State<NewUser> {
                 }),
                 builder: (context, snapshot) => Padding(
                   padding: const EdgeInsets.all(4.0),
-                  child: CircularProgressIndicator(),
+                  child: CircularProgressIndicator(
+                    valueColor:
+                        AlwaysStoppedAnimation<Color>(AppDataBLoC.primaryColor),
+                  ),
                 ),
               ),
       ),
@@ -206,7 +209,7 @@ class _NewUserState extends State<NewUser> {
               padding: const EdgeInsets.only(left: 4.0),
               child: Icon(
                 Icons.my_location,
-                color: Colors.blue,
+                color: AppDataBLoC.primaryColor,
               ),
             ),
           ],

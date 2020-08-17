@@ -60,7 +60,7 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
       child: CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
-            backgroundColor: Colors.white,
+            backgroundColor: AppDataBLoC.secondaryColor,
             automaticallyImplyLeading: false,
             floating: true,
             primary: false,
@@ -82,9 +82,9 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
 
   Widget _productAppBar() {
     return AppBar(
-      backgroundColor: Colors.white,
+      backgroundColor: AppDataBLoC.primaryColor,
       elevation: 4.0,
-      iconTheme: IconThemeData(color: Colors.black),
+      iconTheme: IconThemeData(color: AppDataBLoC.secondaryColor),
       title: Center(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -101,9 +101,13 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
                           });
                         },
                         autofocus: true,
+                        style: TextStyle(color: AppDataBLoC.secondaryColor),
                         textAlignVertical: TextAlignVertical.center,
+                        cursorColor: AppDataBLoC.primaryColor,
                         decoration: InputDecoration(
                           hintText: "Product Name",
+                          hintStyle:
+                              TextStyle(color: AppDataBLoC.secondaryColor),
                           border: InputBorder.none,
                           suffixIcon: GestureDetector(
                             excludeFromSemantics: false,
@@ -117,14 +121,14 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
                             },
                             child: Icon(
                               MdiIcons.close,
-                              color: Colors.black,
+                              color: AppDataBLoC.secondaryColor,
                             ),
                           ),
                         ),
                       )
                     : Text(
                         "Products",
-                        style: TextStyle(color: Colors.black),
+                        style: TextStyle(color: AppDataBLoC.secondaryColor),
                       ),
               ),
             ),
@@ -141,7 +145,7 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
                       padding: const EdgeInsets.all(8.0),
                       child: Icon(
                         MdiIcons.magnify,
-                        color: Colors.black,
+                        color: AppDataBLoC.secondaryColor,
                       ),
                     ),
             ),
@@ -156,7 +160,7 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
                       padding: const EdgeInsets.all(4.0),
                       child: Icon(
                         MdiIcons.cart,
-                        color: Colors.black,
+                        color: AppDataBLoC.secondaryColor,
                       ),
                     ),
                     Positioned(
@@ -211,7 +215,10 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
                 child: Container(
                   height: 60,
                   width: 60,
-                  child: CircularProgressIndicator(),
+                  child: CircularProgressIndicator(
+                    valueColor:
+                        AlwaysStoppedAnimation<Color>(AppDataBLoC.primaryColor),
+                  ),
                 ),
               ),
             );
@@ -226,8 +233,12 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: DropdownButtonHideUnderline(
           child: DropdownButton(
-            style: TextStyle(fontSize: 14.0, color: Colors.black),
+            style: TextStyle(fontSize: 14.0, color: AppDataBLoC.primaryColor),
             isExpanded: true,
+            icon: Icon(
+              MdiIcons.arrowDown,
+              color: AppDataBLoC.primaryColor,
+            ),
             value: _categoryVal,
             onChanged: (value) {
               setState(() {
@@ -239,7 +250,10 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
             items: List.generate(
               _categoryList.length,
               (index) => DropdownMenuItem(
-                child: Text(_categoryList[index]),
+                child: Text(
+                  _categoryList[index],
+                  style: TextStyle(color: AppDataBLoC.primaryColor),
+                ),
                 value: index,
               ),
             ),
@@ -263,29 +277,47 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
                     _categoryVal, _sortVal);
               });
             },
-            icon: Icon(MdiIcons.sortVariant),
+            icon: Icon(
+              MdiIcons.sortVariant,
+              color: AppDataBLoC.primaryColor,
+            ),
             value: _sortVal,
-            style: TextStyle(fontSize: 14.0, color: Colors.black),
+            style: TextStyle(fontSize: 14.0, color: AppDataBLoC.primaryColor),
             isExpanded: true,
             items: [
               DropdownMenuItem(
-                child: Text("No Sort"),
+                child: Text(
+                  "No Sort",
+                  style: TextStyle(color: AppDataBLoC.primaryColor),
+                ),
                 value: 0,
               ),
               DropdownMenuItem(
-                child: Text("A-Z"),
+                child: Text(
+                  "A-Z",
+                  style: TextStyle(color: AppDataBLoC.primaryColor),
+                ),
                 value: 1,
               ),
               DropdownMenuItem(
-                child: Text("Z-A"),
+                child: Text(
+                  "Z-A",
+                  style: TextStyle(color: AppDataBLoC.primaryColor),
+                ),
                 value: 3,
               ),
               DropdownMenuItem(
-                child: Text("Price High-Low"),
+                child: Text(
+                  "Price High-Low",
+                  style: TextStyle(color: AppDataBLoC.primaryColor),
+                ),
                 value: 4,
               ),
               DropdownMenuItem(
-                child: Text("Price Low-High"),
+                child: Text(
+                  "Price Low-High",
+                  style: TextStyle(color: AppDataBLoC.primaryColor),
+                ),
                 value: 2,
               ),
             ],

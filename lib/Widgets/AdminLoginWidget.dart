@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:raghuvir_traders/Elements/AppDataBLoC.dart';
 import 'package:raghuvir_traders/NavigationPages/AdminForgotPassword.dart';
 import 'package:raghuvir_traders/NavigationPages/AdminHomePage.dart';
 import 'package:raghuvir_traders/Services/AdminLogin.dart';
@@ -23,15 +24,16 @@ class _AdminLoginWidgetState extends State<AdminLoginWidget> {
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
+      backgroundColor: AppDataBLoC.secondaryColor,
       contentPadding: EdgeInsets.all(16.0),
       title: Container(
         height: 48.0,
-        color: Colors.blueAccent,
+        color: AppDataBLoC.primaryColor,
         child: Center(
           child: Text(
             "Login As Admin",
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(color: AppDataBLoC.secondaryColor),
           ),
         ),
       ),
@@ -95,7 +97,7 @@ class _AdminLoginWidgetState extends State<AdminLoginWidget> {
                 padding: const EdgeInsets.all(16.0),
                 child: Text(
                   "Forgot Password",
-                  style: TextStyle(color: Colors.blue),
+                  style: TextStyle(color: AppDataBLoC.primaryColor),
                 ),
               ),
             ),
@@ -117,7 +119,7 @@ class _AdminLoginWidgetState extends State<AdminLoginWidget> {
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: Text("Login"),
               ),
-              color: Colors.blueAccent,
+              color: AppDataBLoC.primaryColor,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8.0),
               ),

@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:raghuvir_traders/Elements/AppDataBLoC.dart';
@@ -37,11 +36,11 @@ class _ProductItemState extends State<ProductItem> {
             children: <Widget>[
               Expanded(
                 child: Center(
-                  child: widget.product.logo.startsWith("http")
-                      ? CachedNetworkImage(
-                          imageUrl: widget.product.logo,
-                          height: 80,
-                          width: 80,
+                  child: widget.product.logo == ("default")
+                      ? Image.asset(
+                          "assets/apple.png",
+                          height: 40,
+                          width: 40,
                           fit: BoxFit.fill,
                         )
                       : Image.memory(
@@ -68,7 +67,9 @@ class _ProductItemState extends State<ProductItem> {
                             widget.product.name,
                             textAlign: TextAlign.left,
                             style: TextStyle(
-                                fontWeight: FontWeight.w600, fontSize: 18),
+                                fontWeight: FontWeight.w600,
+                                fontSize: 18,
+                                color: AppDataBLoC.primaryColor),
                           ),
                         ),
                       ),
@@ -92,7 +93,7 @@ class _ProductItemState extends State<ProductItem> {
                               child: Text(
                                 "Rs. " + widget.product.price.toString(),
                                 style: TextStyle(
-                                    color: Colors.blueGrey,
+                                    color: AppDataBLoC.primaryColor,
                                     fontWeight: FontWeight.w500),
                               ),
                             ),
@@ -147,7 +148,7 @@ class _ProductItemButtonBuilderState extends State<ProductItemButtonBuilder> {
   Widget _itemButton() {
     return _itemNum == 0
         ? RaisedButton(
-            color: Colors.blueAccent,
+            color: AppDataBLoC.primaryColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(4.0),
             ),
@@ -159,7 +160,7 @@ class _ProductItemButtonBuilderState extends State<ProductItemButtonBuilder> {
             },
             child: Text(
               "Add",
-              style: TextStyle(color: Colors.white),
+              style: TextStyle(color: AppDataBLoC.secondaryColor),
             ),
           )
         : Container(
@@ -184,7 +185,7 @@ class _ProductItemButtonBuilderState extends State<ProductItemButtonBuilder> {
                           blurRadius: 2.0,
                         ),
                       ],
-                      color: Colors.white,
+                      color: AppDataBLoC.secondaryColor,
                     ),
                     padding: const EdgeInsets.symmetric(horizontal: 4.0),
                     child: Center(
@@ -199,6 +200,9 @@ class _ProductItemButtonBuilderState extends State<ProductItemButtonBuilder> {
                   child: Center(
                     child: Text(
                       _itemNum.toString(),
+                      style: TextStyle(
+                          color: AppDataBLoC.primaryColor,
+                          fontWeight: FontWeight.w500),
                     ),
                   ),
                 ),
@@ -219,7 +223,7 @@ class _ProductItemButtonBuilderState extends State<ProductItemButtonBuilder> {
                           blurRadius: 2.0,
                         ),
                       ],
-                      color: Colors.white,
+                      color: AppDataBLoC.secondaryColor,
                     ),
                     padding: const EdgeInsets.symmetric(horizontal: 4.0),
                     child: Center(

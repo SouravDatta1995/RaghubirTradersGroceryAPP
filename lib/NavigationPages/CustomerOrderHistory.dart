@@ -52,12 +52,12 @@ class _CustomerOrderHistoryState extends State<CustomerOrderHistory> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        actionsIconTheme: IconThemeData(color: Colors.black),
-        iconTheme: IconThemeData(color: Colors.black),
+        backgroundColor: AppDataBLoC.primaryColor,
+        actionsIconTheme: IconThemeData(color: AppDataBLoC.secondaryColor),
+        iconTheme: IconThemeData(color: AppDataBLoC.secondaryColor),
         title: Text(
           "Order History",
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: AppDataBLoC.secondaryColor),
         ),
         actions: [
           GestureDetector(
@@ -82,10 +82,9 @@ class _CustomerOrderHistoryState extends State<CustomerOrderHistory> {
             FloatingActionButton(
               heroTag: "phoneIcon",
               onPressed: () {
-                ApplicationUrlService.launchPhone(phoneNumber: "9477014134");
+                ApplicationUrlService.launchPhone();
               },
               child: Icon(MdiIcons.phone),
-              backgroundColor: Colors.blueAccent,
             ),
             SizedBox(
               width: 16.0,
@@ -93,10 +92,9 @@ class _CustomerOrderHistoryState extends State<CustomerOrderHistory> {
             FloatingActionButton(
               heroTag: "waIcon",
               onPressed: () {
-                ApplicationUrlService.launchWhatsApp(phone: "+919477014134");
+                ApplicationUrlService.launchWhatsApp();
               },
               child: Icon(MdiIcons.whatsapp),
-              backgroundColor: Colors.blueAccent,
             ),
           ],
         ),
@@ -173,9 +171,11 @@ class _CustomerOrderHistoryState extends State<CustomerOrderHistory> {
                         children: [
                           Text(
                             "Basket Id : " + c.basketId.toString(),
+                            style: TextStyle(color: AppDataBLoC.primaryColor),
                           ),
                           Text(
                             "Total : " + c.totalPrice.toString(),
+                            style: TextStyle(color: AppDataBLoC.primaryColor),
                           ),
                         ],
                       ),
@@ -214,7 +214,10 @@ class _CustomerOrderHistoryState extends State<CustomerOrderHistory> {
               child: Container(
                 height: 30,
                 width: 30,
-                child: CircularProgressIndicator(),
+                child: CircularProgressIndicator(
+                  valueColor:
+                      AlwaysStoppedAnimation<Color>(AppDataBLoC.primaryColor),
+                ),
               ),
             );
           }

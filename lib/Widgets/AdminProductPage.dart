@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:raghuvir_traders/Elements/AppDataBLoC.dart';
@@ -40,7 +39,7 @@ class _AdminProductPageState extends State<AdminProductPage> {
       child: CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
-            backgroundColor: Colors.white,
+            backgroundColor: AppDataBLoC.secondaryColor,
             automaticallyImplyLeading: false,
             floating: true,
             primary: false,
@@ -124,9 +123,12 @@ class _AdminProductPageState extends State<AdminProductPage> {
                 return SliverFillRemaining(
                   child: Center(
                     child: Container(
-                      height: 60,
-                      width: 60,
-                      child: CircularProgressIndicator(),
+                      height: 30,
+                      width: 30,
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                            AppDataBLoC.primaryColor),
+                      ),
                     ),
                   ),
                 );
@@ -189,9 +191,9 @@ class _AdminProductPageState extends State<AdminProductPage> {
             ),
             Expanded(
               child: Center(
-                child: product.logo.startsWith("http")
-                    ? CachedNetworkImage(
-                        imageUrl: product.logo,
+                child: product.logo == ("default")
+                    ? Image.asset(
+                        "assets/apple.png",
                         height: 40,
                         width: 40,
                         fit: BoxFit.fill,

@@ -44,7 +44,6 @@ class _AboutPageState extends State<AboutPage> {
                   ),
                   Center(
                       child: Text("material_design_icons_flutter: ^4.0.5345")),
-                  Center(child: Text("cached_network_image: ^2.2.0+1")),
                   Center(child: Text("sms_autofill: ^1.2.3")),
                   Center(child: Text("image_picker: ^0.6.7+4")),
                   Center(child: Text("image_cropper: ^1.2.3")),

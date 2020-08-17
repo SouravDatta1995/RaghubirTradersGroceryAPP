@@ -10,8 +10,7 @@ class Product {
         this.name = json['Name'],
         this.price = json['BasePrice'],
         this.category = json['Category'] ?? "0",
-        this.logo = json['Image'] ??
-            'https://freeiconshop.com/wp-content/uploads/edd/apple-outline-filled.png';
+        this.logo = json['Image'] ?? 'default';
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();

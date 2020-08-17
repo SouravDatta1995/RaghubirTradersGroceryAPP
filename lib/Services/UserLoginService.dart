@@ -33,6 +33,7 @@ class UserLoginService {
       String phoneNumber, String otp) async {
     final response =
         await http.get('http://15.207.50.9:8082/users/$phoneNumber/$otp');
+    print(response.statusCode);
     if (response.statusCode == 409) {
       return {"New User": null};
     } else if (response.statusCode == 200) {

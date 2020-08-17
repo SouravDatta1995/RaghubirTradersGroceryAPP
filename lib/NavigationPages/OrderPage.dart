@@ -37,10 +37,10 @@ class _OrderPageState extends State<OrderPage> {
       appBar: AppBar(
         title: Text(
           "Order",
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: AppDataBLoC.secondaryColor),
         ),
-        backgroundColor: Colors.blueAccent,
-        iconTheme: IconThemeData(color: Colors.white),
+        backgroundColor: AppDataBLoC.primaryColor,
+        iconTheme: IconThemeData(color: AppDataBLoC.secondaryColor),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -220,7 +220,10 @@ class OrderDetailsCard extends StatelessWidget {
                 child: Container(
                   height: 30.0,
                   width: 30.0,
-                  child: CircularProgressIndicator(),
+                  child: CircularProgressIndicator(
+                    valueColor:
+                        AlwaysStoppedAnimation<Color>(AppDataBLoC.primaryColor),
+                  ),
                 ),
               );
             } else {
@@ -420,11 +423,11 @@ class _PaymentSelectorCardState extends State<PaymentSelectorCard> {
                       label: Text("Cash on Delivery"),
                       labelStyle: TextStyle(
                         color: _paymentSelectorIndex == 1
-                            ? Colors.white
+                            ? AppDataBLoC.secondaryColor
                             : Colors.black,
                       ),
                       autofocus: true,
-                      selectedColor: Colors.blue,
+                      selectedColor: AppDataBLoC.primaryColor,
                       selected: _paymentSelectorIndex == 1,
                       onSelected: (value) {
                         setState(() {
@@ -436,10 +439,10 @@ class _PaymentSelectorCardState extends State<PaymentSelectorCard> {
                       label: Text("Online Payment"),
                       labelStyle: TextStyle(
                         color: _paymentSelectorIndex == 2
-                            ? Colors.white
+                            ? AppDataBLoC.secondaryColor
                             : Colors.black,
                       ),
-                      selectedColor: Colors.blue,
+                      selectedColor: AppDataBLoC.primaryColor,
                       selected: _paymentSelectorIndex == 2,
                       onSelected: (value) {
                         setState(() {
@@ -469,24 +472,24 @@ class _PaymentSelectorCardState extends State<PaymentSelectorCard> {
                           if (AppDataBLoC.deliveryAddress == "") {
                             Scaffold.of(context).showSnackBar(SnackBar(
                               content: Text("Please Enter delivery address"),
-                              duration: Duration(seconds: 1),
+                              duration: Duration(seconds: 2),
                             ));
                           } else if (AppDataBLoC.pin == 0 ||
                               AppDataBLoC.pin == null) {
                             Scaffold.of(context).showSnackBar(SnackBar(
                               content: Text("Please Enter Pin Code"),
-                              duration: Duration(seconds: 1),
+                              duration: Duration(seconds: 2),
                             ));
                           } else if (AppDataBLoC.pin < 100000) {
                             Scaffold.of(context).showSnackBar(SnackBar(
                               content: Text("Pin Code not valid"),
-                              duration: Duration(seconds: 1),
+                              duration: Duration(seconds: 2),
                             ));
                           } else if (AppDataBLoC.pin != 700104 &&
                               AppDataBLoC.pin != 700063) {
                             Scaffold.of(context).showSnackBar(SnackBar(
                               content: Text("Area Not Deliverable"),
-                              duration: Duration(seconds: 1),
+                              duration: Duration(seconds: 2),
                             ));
                           } else {
                             OrderManagementService.initiateCheckout(
@@ -553,7 +556,7 @@ class _PaymentSelectorCardState extends State<PaymentSelectorCard> {
                                 RazorPayOptions rpo = value.values.toList()[0];
                                 //print(rpo.amount.toString());
                                 var options = {
-                                  'key': 'rzp_test_pgmDCnUN2PTsMK',
+                                  'key': 'rzp_live_9azvJwi1zeXfil',
                                   'amount': rpo.amount,
                                   //in the smallest currency sub-unit.
                                   'name': 'Raghuvir Traders',
@@ -577,18 +580,16 @@ class _PaymentSelectorCardState extends State<PaymentSelectorCard> {
             FloatingActionButton(
               heroTag: null,
               onPressed: () {
-                ApplicationUrlService.launchPhone(phoneNumber: "9477014134");
+                ApplicationUrlService.launchPhone();
               },
               child: Icon(MdiIcons.phone),
-              backgroundColor: Colors.blueAccent,
             ),
             FloatingActionButton(
               heroTag: null,
               onPressed: () {
-                ApplicationUrlService.launchWhatsApp(phone: "+919477014134");
+                ApplicationUrlService.launchWhatsApp();
               },
               child: Icon(MdiIcons.whatsapp),
-              backgroundColor: Colors.blueAccent,
             ),
           ],
         ),

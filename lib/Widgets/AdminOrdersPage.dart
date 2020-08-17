@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:raghuvir_traders/Elements/AppDataBLoC.dart';
 import 'package:raghuvir_traders/Elements/Cart.dart';
 import 'package:raghuvir_traders/Services/OrderHistoryService.dart';
 
@@ -115,7 +116,7 @@ class _AdminOrdersPageState extends State<AdminOrdersPage> {
                             });
                           },
                           child: Text("Complete Order"),
-                          textColor: Colors.white,
+                          textColor: AppDataBLoC.secondaryColor,
                           color: Colors.green,
                         ),
                       ),
@@ -157,7 +158,10 @@ class _AdminOrdersPageState extends State<AdminOrdersPage> {
               child: Container(
                 height: 30.0,
                 width: 30.0,
-                child: CircularProgressIndicator(),
+                child: CircularProgressIndicator(
+                  valueColor:
+                      AlwaysStoppedAnimation<Color>(AppDataBLoC.primaryColor),
+                ),
               ),
             );
           }

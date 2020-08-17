@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:raghuvir_traders/Elements/AppDataBLoC.dart';
 import 'package:raghuvir_traders/Elements/UserLogin.dart';
 import 'package:raghuvir_traders/Widgets/AdminLoginWidget.dart';
 import 'package:raghuvir_traders/Widgets/OTPWidget.dart';
@@ -16,7 +17,7 @@ class _LoginState extends State<Login> {
   String _phoneNumber = "";
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   Future<int> _cachedPhoneNumber;
-
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   void initState() {
     _cachedPhoneNumber =
@@ -28,6 +29,7 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       body: Stack(
         children: [
           Column(
@@ -36,19 +38,22 @@ class _LoginState extends State<Login> {
               Expanded(
                 flex: 2,
                 child: Container(
-                  color: Colors.blueAccent,
+                  color: AppDataBLoC.primaryColor,
                 ),
               ),
               Expanded(
                 child: Container(
-                  color: Colors.white,
+                  color: AppDataBLoC.secondaryColor,
                 ),
               ),
             ],
           ),
           FutureBuilder(
             future: _cachedPhoneNumber.then((value) {
-              if (value != 0) UserLogin.getUserLogin(context, value.toString());
+              if (value != 0) {
+                print("primary");
+                UserLogin.getUserLogin(context, value.toString());
+              }
               return value;
             }),
             builder: (context, snapshot) {
@@ -58,7 +63,8 @@ class _LoginState extends State<Login> {
                     height: 60,
                     width: 60,
                     child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                          AppDataBLoC.secondaryColor),
                     ),
                   ),
                 );
@@ -68,8 +74,8 @@ class _LoginState extends State<Login> {
                     height: 60,
                     width: 60,
                     child: CircularProgressIndicator(
-                        valueColor:
-                            AlwaysStoppedAnimation<Color>(Colors.white)),
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                            AppDataBLoC.secondaryColor)),
                   ),
                 );
               else
@@ -91,19 +97,22 @@ class _LoginState extends State<Login> {
                                   Text(
                                     "R",
                                     style: TextStyle(
-                                        fontSize: 72, color: Colors.white),
+                                        fontSize: 72,
+                                        color: AppDataBLoC.secondaryColor),
                                   ),
                                   Text(
                                     "\nT",
                                     style: TextStyle(
-                                        fontSize: 72, color: Colors.white),
+                                        fontSize: 72,
+                                        color: AppDataBLoC.secondaryColor),
                                   ),
                                 ],
                               ),
                               Center(
                                 child: Text(
                                   "Raghuvir Traders",
-                                  style: TextStyle(color: Colors.white),
+                                  style: TextStyle(
+                                      color: AppDataBLoC.secondaryColor),
                                 ),
                               )
                             ],
@@ -156,14 +165,14 @@ class _LoginState extends State<Login> {
 //                  UserLoginService.sendOtp(_phoneNumber);
                   _showOTPDialog();
                 },
-                color: Colors.blueAccent,
+                color: AppDataBLoC.primaryColor,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.0),
                 ),
                 child: Center(
                     child: Text(
                   "LOGIN",
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: AppDataBLoC.secondaryColor),
                 )),
               ),
             ],
@@ -183,7 +192,7 @@ class _LoginState extends State<Login> {
           },
           child: Text(
             "Login as Admin",
-            style: TextStyle(color: Colors.blue),
+            style: TextStyle(color: AppDataBLoC.primaryColor),
           ),
         ),
       ),
