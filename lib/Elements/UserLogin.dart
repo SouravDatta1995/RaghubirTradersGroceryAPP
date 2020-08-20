@@ -16,7 +16,7 @@ class UserLogin {
 
   static Future<Map<String, dynamic>> getUserLogin(
       BuildContext context, String phoneNumber) {
-    print("Logging in");
+    //print("Logging in");
     return UserLoginService.loginUser(phoneNumber).then((value) {
       String _userType = value.keys.toList()[0];
       UserData _userData = value.values.toList()[0];

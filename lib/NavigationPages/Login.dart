@@ -16,14 +16,26 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   String _phoneNumber = "";
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-  Future<int> _cachedPhoneNumber;
+  int _cachedPhoneNumber;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   void initState() {
-    _cachedPhoneNumber =
-        _prefs.then((value) => value.getInt('UserPhoneNumber') ?? 0);
+    _prefs.then((value) => value.getInt('UserPhoneNumber') ?? 0).then((value) {
+      setCachePhoneNum(value);
+      if (value != 0) {
+        Future(() {
+          UserLogin.getUserLogin(context, value.toString());
+        });
+      }
+    });
 
     super.initState();
+  }
+
+  setCachePhoneNum(int value) {
+    setState(() {
+      _cachedPhoneNumber = value;
+    });
   }
 
   @override
@@ -48,38 +60,8 @@ class _LoginState extends State<Login> {
               ),
             ],
           ),
-          FutureBuilder(
-            future: _cachedPhoneNumber.then((value) {
-              if (value != 0) {
-                print("primary");
-                UserLogin.getUserLogin(context, value.toString());
-              }
-              return value;
-            }),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData)
-                return Center(
-                  child: Container(
-                    height: 60,
-                    width: 60,
-                    child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                          AppDataBLoC.secondaryColor),
-                    ),
-                  ),
-                );
-              else if (snapshot.data != 0)
-                return Center(
-                  child: Container(
-                    height: 60,
-                    width: 60,
-                    child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                            AppDataBLoC.secondaryColor)),
-                  ),
-                );
-              else
-                return Padding(
+          _cachedPhoneNumber == 0
+              ? Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -125,9 +107,18 @@ class _LoginState extends State<Login> {
                       ),
                     ],
                   ),
-                );
-            },
-          ),
+                )
+              : Center(
+                  child: Container(
+                    height: 30.0,
+                    width: 30.0,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2.0,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                          AppDataBLoC.secondaryColor),
+                    ),
+                  ),
+                ),
         ],
       ),
     );
