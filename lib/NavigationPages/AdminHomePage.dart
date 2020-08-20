@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:raghuvir_traders/Elements/AppDataBLoC.dart';
 import 'package:raghuvir_traders/Widgets/AdminOrdersPage.dart';
 import 'package:raghuvir_traders/Widgets/AdminProductPage.dart';
 
@@ -49,7 +50,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
               child: Container(
                 height: 10.0,
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.white),
+                  border: Border.all(color: AppDataBLoC.secondaryColor),
                   borderRadius: BorderRadius.all(
                     Radius.circular(9.0),
                   ),
@@ -60,7 +61,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                         vertical: 4.0, horizontal: 8.0),
                     child: Text(
                       "Logout",
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: AppDataBLoC.secondaryColor),
                     ),
                   ),
                 ),

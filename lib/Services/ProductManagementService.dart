@@ -39,11 +39,12 @@ class ProductManagementService {
         "\"}";
     //print(data);
     var dio = Dio();
-    FormData formData = FormData.fromMap({
-      'productImage': await MultipartFile.fromFile(fileName,
-          filename: productName + ".jpg"),
-      'product': data
-    });
+    FormData formData = FormData.fromMap({'product': data});
+    if (fileName != "")
+      formData.files.add(MapEntry(
+          'productImage',
+          await MultipartFile.fromFile(fileName,
+              filename: productName + ".jpg")));
     //print(formData.files[0].value.length.toString());
     final response = await dio.post(
       'http://15.207.50.9:8082/product/',

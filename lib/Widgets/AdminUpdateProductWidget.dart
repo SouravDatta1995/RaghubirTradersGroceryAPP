@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
@@ -40,9 +39,9 @@ class _AdminUpdateProductWidgetState extends State<AdminUpdateProductWidget> {
       maxWidth: 256,
       compressQuality: 60,
       androidUiSettings: AndroidUiSettings(
-        statusBarColor: Colors.blueAccent,
-        toolbarColor: Colors.blueAccent,
-        activeControlsWidgetColor: Colors.blueAccent,
+        statusBarColor: AppDataBLoC.primaryColor,
+        toolbarColor: AppDataBLoC.primaryColor,
+        activeControlsWidgetColor: AppDataBLoC.primaryColor,
       ),
     );
     setState(() {});
@@ -90,11 +89,11 @@ class _AdminUpdateProductWidgetState extends State<AdminUpdateProductWidget> {
                           child: _image == null
                               ? Stack(
                                   children: [
-                                    widget.product.logo.startsWith("http")
-                                        ? CachedNetworkImage(
-                                            imageUrl: widget.product.logo,
-                                            height: 80,
-                                            width: 80,
+                                    widget.product.logo == ("default")
+                                        ? Image.asset(
+                                            "assets/apple.png",
+                                            height: 40,
+                                            width: 40,
                                             fit: BoxFit.fill,
                                           )
                                         : Image.memory(
@@ -173,13 +172,14 @@ class _AdminUpdateProductWidgetState extends State<AdminUpdateProductWidget> {
                     alignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       RaisedButton(
+                        color: AppDataBLoC.secondaryColor,
                         onPressed: () {
                           _formKey.currentState.reset();
                         },
                         child: Center(
                           child: Text(
                             "RESET",
-                            style: TextStyle(color: Colors.blueAccent),
+                            style: TextStyle(color: AppDataBLoC.primaryColor),
                           ),
                         ),
                       ),
@@ -194,7 +194,8 @@ class _AdminUpdateProductWidgetState extends State<AdminUpdateProductWidget> {
                           child: _saveButtonState == false
                               ? Text(
                                   "SAVE",
-                                  style: TextStyle(color: Colors.white),
+                                  style: TextStyle(
+                                      color: AppDataBLoC.secondaryColor),
                                 )
                               : FutureBuilder(
                                   future:
@@ -210,11 +211,14 @@ class _AdminUpdateProductWidgetState extends State<AdminUpdateProductWidget> {
                                   builder: (context, snapshot) => Container(
                                     height: 30,
                                     width: 30,
-                                    child: CircularProgressIndicator(),
+                                    child: CircularProgressIndicator(
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                          AppDataBLoC.primaryColor),
+                                    ),
                                   ),
                                 ),
                         ),
-                        color: Colors.blueAccent,
+                        color: AppDataBLoC.primaryColor,
                       ),
                     ],
                   ),

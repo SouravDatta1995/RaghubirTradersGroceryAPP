@@ -34,9 +34,9 @@ class _AdminAddProductWidgetState extends State<AdminAddProductWidget> {
       maxWidth: 256,
       compressQuality: 60,
       androidUiSettings: AndroidUiSettings(
-        statusBarColor: Colors.blueAccent,
-        toolbarColor: Colors.blueAccent,
-        activeControlsWidgetColor: Colors.blueAccent,
+        statusBarColor: AppDataBLoC.primaryColor,
+        toolbarColor: AppDataBLoC.primaryColor,
+        activeControlsWidgetColor: AppDataBLoC.primaryColor,
       ),
     );
     setState(() {});
@@ -152,13 +152,14 @@ class _AdminAddProductWidgetState extends State<AdminAddProductWidget> {
                     alignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       RaisedButton(
+                        color: AppDataBLoC.secondaryColor,
                         onPressed: () {
                           _formKey.currentState.reset();
                         },
                         child: Center(
                           child: Text(
                             "RESET",
-                            style: TextStyle(color: Colors.blueAccent),
+                            style: TextStyle(color: AppDataBLoC.primaryColor),
                           ),
                         ),
                       ),
@@ -174,13 +175,14 @@ class _AdminAddProductWidgetState extends State<AdminAddProductWidget> {
                           child: _saveButtonState == false
                               ? Text(
                                   "SAVE",
-                                  style: TextStyle(color: Colors.white),
+                                  style: TextStyle(
+                                      color: AppDataBLoC.secondaryColor),
                                 )
                               : FutureBuilder(
                                   future: ProductManagementService.addProduct(
                                     _productName,
                                     _productPrice,
-                                    _image.path,
+                                    _image != null ? _image.path : "",
                                     _categoryVal.toString(),
                                   ).then((value) {
                                     Navigator.popUntil(context,
@@ -189,11 +191,14 @@ class _AdminAddProductWidgetState extends State<AdminAddProductWidget> {
                                   builder: (context, snapshot) => Container(
                                     height: 30,
                                     width: 30,
-                                    child: CircularProgressIndicator(),
+                                    child: CircularProgressIndicator(
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                          AppDataBLoC.primaryColor),
+                                    ),
                                   ),
                                 ),
                         ),
-                        color: Colors.blueAccent,
+                        color: AppDataBLoC.primaryColor,
                       ),
                     ],
                   ),

@@ -5,6 +5,7 @@ import 'package:raghuvir_traders/NavigationPages/AboutPage.dart';
 import 'package:raghuvir_traders/NavigationPages/CartPage.dart';
 import 'package:raghuvir_traders/NavigationPages/CustomerHomePage..dart';
 import 'package:raghuvir_traders/NavigationPages/CustomerOrderHistory.dart';
+import 'package:raghuvir_traders/NavigationPages/OrderMedicinePage.dart';
 
 class DrawerWidget extends StatefulWidget {
   final String currentPage;
@@ -38,12 +39,14 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                               Text(
                                 "R",
                                 style: TextStyle(
-                                    fontSize: 48, color: Colors.white),
+                                    fontSize: 48,
+                                    color: AppDataBLoC.secondaryColor),
                               ),
                               Text(
                                 "\nT",
                                 style: TextStyle(
-                                    fontSize: 48, color: Colors.white),
+                                    fontSize: 48,
+                                    color: AppDataBLoC.secondaryColor),
                               ),
                             ],
                           ),
@@ -53,7 +56,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                         ),
                       ],
                     ),
-                    color: Colors.blueAccent,
+                    color: AppDataBLoC.primaryColor,
                   ),
                   Padding(
                     padding: const EdgeInsets.all(16.0),
@@ -66,14 +69,16 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                           style: TextStyle(
                               fontSize: 24.0,
                               fontWeight: FontWeight.bold,
-                              color: Colors.white),
+                              color: AppDataBLoC.secondaryColor),
                         ),
                         SizedBox(
                           height: 4.0,
                         ),
                         Text(
                           AppDataBLoC.data.phoneNumber.toString(),
-                          style: TextStyle(fontSize: 18.0, color: Colors.white),
+                          style: TextStyle(
+                              fontSize: 18.0,
+                              color: AppDataBLoC.secondaryColor),
                         ),
                       ],
                     ),
@@ -87,7 +92,10 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             child: ListView(
               children: <Widget>[
                 ListTile(
-                  title: Text("Products"),
+                  title: Text(
+                    "Products",
+                    style: TextStyle(color: AppDataBLoC.primaryColor),
+                  ),
                   onTap: () {
                     Navigator.pop(context);
                     if (widget.currentPage != "Products")
@@ -99,7 +107,10 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   },
                 ),
                 ListTile(
-                  title: Text("Cart"),
+                  title: Text(
+                    "Cart",
+                    style: TextStyle(color: AppDataBLoC.primaryColor),
+                  ),
                   onTap: () {
                     setState(() {
                       Navigator.pop(context);
@@ -110,7 +121,10 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   },
                 ),
                 ListTile(
-                  title: Text("Orders"),
+                  title: Text(
+                    "Orders",
+                    style: TextStyle(color: AppDataBLoC.primaryColor),
+                  ),
                   onTap: () {
                     setState(() {
                       Navigator.pop(context);
@@ -121,7 +135,21 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   },
                 ),
                 ListTile(
-                  title: Text("About this app"),
+                  title: Text(
+                    "Order Medicine",
+                    style: TextStyle(color: AppDataBLoC.primaryColor),
+                  ),
+                  onTap: () {
+                    setState(() {
+                      Navigator.pushNamed(context, OrderMedicinePage.id);
+                    });
+                  },
+                ),
+                ListTile(
+                  title: Text(
+                    "About this app",
+                    style: TextStyle(color: AppDataBLoC.primaryColor),
+                  ),
                   onTap: () {
                     setState(() {
                       Navigator.pushNamed(context, AboutPage.id);
@@ -135,8 +163,14 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("Powered by : Mukherjee Solutions"),
-                Text("Contact : 7059249929"),
+                Text(
+                  "Powered by : Mukherjee Solutions",
+                  style: TextStyle(color: AppDataBLoC.primaryColor),
+                ),
+                Text(
+                  "Contact : 7059249929",
+                  style: TextStyle(color: AppDataBLoC.primaryColor),
+                ),
               ],
             ),
           ),
@@ -150,11 +184,11 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     context, '/', (route) => false);
               },
               child: Container(
-                color: Colors.blueAccent,
+                color: AppDataBLoC.primaryColor,
                 child: Center(
                   child: Text(
                     "Logout",
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(color: AppDataBLoC.secondaryColor),
                   ),
                 ),
               ),

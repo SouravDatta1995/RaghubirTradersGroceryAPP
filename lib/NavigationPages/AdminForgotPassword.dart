@@ -28,7 +28,10 @@ class _AdminForgotPasswordState extends State<AdminForgotPassword> {
       appBar: AppBar(
         title: Text("Reset Password"),
         centerTitle: true,
-        leading: Icon(MdiIcons.close),
+        leading: GestureDetector(
+          child: Icon(MdiIcons.close),
+          onTap: () => Navigator.pop(context),
+        ),
       ),
       body: Form(
         key: _formKey,
@@ -59,7 +62,7 @@ class _AdminForgotPasswordState extends State<AdminForgotPassword> {
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Text(
-                  "Secret Question",
+                  "Secret Question : What is your Mother's pet name?",
                   style: TextStyle(fontSize: 18.0),
                 ),
               ),

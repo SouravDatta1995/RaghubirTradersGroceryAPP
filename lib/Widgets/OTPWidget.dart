@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:raghuvir_traders/Elements/AppDataBLoC.dart';
 import 'package:raghuvir_traders/Elements/UserLogin.dart';
 import 'package:raghuvir_traders/Services/UserLoginService.dart';
 import 'package:sms_autofill/sms_autofill.dart';
@@ -62,6 +63,8 @@ class _OTPWidgetState extends State<OTPWidget> {
                       width: 12.0,
                       child: CircularProgressIndicator(
                         strokeWidth: 2.0,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                            AppDataBLoC.primaryColor),
                       ),
                     )
                   : Container(
@@ -71,24 +74,29 @@ class _OTPWidgetState extends State<OTPWidget> {
             ],
           ),
         ),
-        SizedBox(
-          height: 20,
-        ),
         _validOtp
             ? Container(
-                height: 0.0,
+                height: 16.0,
                 width: 0.0,
               )
-            : Text(
-                "Invalid Otp",
-                style: TextStyle(color: Colors.red),
+            : Container(
+                height: 16.0,
+                child: Center(
+                  child: Text(
+                    "Invalid Otp",
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
               ),
+        SizedBox(
+          height: 10,
+        ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: PinFieldAutoFill(
             codeLength: 4,
             decoration: CirclePinDecoration(
-              strokeColor: Colors.blueAccent,
+              strokeColor: AppDataBLoC.primaryColor,
               textStyle: TextStyle(
                 fontSize: 16,
                 color: Colors.black,
@@ -120,7 +128,7 @@ class _OTPWidgetState extends State<OTPWidget> {
                   ? GestureDetector(
                       child: Text(
                         'Resend',
-                        style: TextStyle(color: Colors.blue),
+                        style: TextStyle(color: AppDataBLoC.primaryColor),
                       ),
                       onTap: () {
                         setState(() {
@@ -170,33 +178,67 @@ class _OTPWidgetState extends State<OTPWidget> {
               FocusScope.of(context).unfocus();
               setState(() {
                 _loginLoad = true;
+                _validOtp = true;
               });
             },
-            color: Colors.blueAccent,
+            color: AppDataBLoC.primaryColor,
             child: _loginLoad
-                ? FutureBuilder<Map<String, dynamic>>(
-                    //TODO : Update to getUserLoginViaOtp for otp validation
-                    future: UserLogin.getUserLogin(context, widget.phoneNumber),
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData)
-                        return Container(
-                          height: 15.0,
-                          width: 15.0,
-                          child: CircularProgressIndicator(
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(Colors.white),
-                            strokeWidth: 2.0,
-                          ),
-                        );
-                      else {
-                        return Text("Submit");
-                      }
-                    },
+                ? OtpButton(
+                    phoneNumber: widget.phoneNumber,
+                    loginLoad: _callbackLoginLoad,
+                    validateOtp: _callbackValidateOtp,
                   )
                 : Text("Submit"),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8.0),
             ),
           );
+  }
+
+  _callbackValidateOtp(bool val) {
+    setState(() {
+      _validOtp = val;
+    });
+  }
+
+  _callbackLoginLoad(bool val) {
+    setState(() {
+      _loginLoad = val;
+    });
+  }
+}
+
+class OtpButton extends StatefulWidget {
+  final String phoneNumber;
+  final Function(bool) validateOtp, loginLoad;
+  const OtpButton({Key key, this.phoneNumber, this.validateOtp, this.loginLoad})
+      : super(key: key);
+
+  @override
+  _OtpButtonState createState() => _OtpButtonState();
+}
+
+class _OtpButtonState extends State<OtpButton> {
+  @override
+  void initState() {
+    UserLogin.getUserLogin(context, widget.phoneNumber).then((value) {
+      if (value.keys.toList()[0] == "Error") {
+        widget.validateOtp(false);
+      }
+      widget.loginLoad(false);
+    });
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 20.0,
+      width: 20.0,
+      child: CircularProgressIndicator(
+        strokeWidth: 2.0,
+        valueColor: AlwaysStoppedAnimation<Color>(AppDataBLoC.secondaryColor),
+      ),
+    );
   }
 }

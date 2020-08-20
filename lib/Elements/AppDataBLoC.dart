@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:raghuvir_traders/Elements/Cart.dart';
 import 'package:raghuvir_traders/Elements/Product.dart';
 import 'package:raghuvir_traders/Elements/UserData.dart';
@@ -5,6 +6,8 @@ import 'package:raghuvir_traders/Services/CartManagementService.dart';
 import 'package:rxdart/rxdart.dart';
 
 class AppDataBLoC {
+  static Color primaryColor = Color(0xff016064);
+  static Color secondaryColor = Color(0xfff4f4e2);
   static final AppDataBLoC appDataBLoC = new AppDataBLoC._internal();
   static Cart cart;
   static UserData data;
@@ -12,17 +15,16 @@ class AppDataBLoC {
   static String deliveryAddress;
   static List<String> categoryList = [
     "View All",
-    "Fruits & Vegetables",
-    "Foodgrains, Oil & Masala",
+    "Foodgrains,Oil & Masala",
     "Bakery, Cakes & Dairy",
     "Beverages",
     "Snacks & Branded Foods",
-    "Beauty & Hygiene",
+    "Beauty and Hygiene",
     "Cleaning & Household",
-    "Kitchen, Garden & Pets",
-    "Eggs,Meat & Fish",
-    "Gourmet & World Food",
-    "Baby Care",
+    "Meat and Egg",
+    "Baby's World",
+    "Apparels and More",
+    "Jewellery",
   ];
   final cartStream = BehaviorSubject<Cart>();
   final cartNum = BehaviorSubject<int>();

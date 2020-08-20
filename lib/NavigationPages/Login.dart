@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:raghuvir_traders/Elements/AppDataBLoC.dart';
 import 'package:raghuvir_traders/Elements/UserLogin.dart';
 import 'package:raghuvir_traders/Widgets/AdminLoginWidget.dart';
 import 'package:raghuvir_traders/Widgets/OTPWidget.dart';
@@ -15,19 +16,32 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   String _phoneNumber = "";
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-  Future<int> _cachedPhoneNumber;
-
+  int _cachedPhoneNumber;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   void initState() {
-    _cachedPhoneNumber =
-        _prefs.then((value) => value.getInt('UserPhoneNumber') ?? 0);
+    _prefs.then((value) => value.getInt('UserPhoneNumber') ?? 0).then((value) {
+      setCachePhoneNum(value);
+      if (value != 0) {
+        Future(() {
+          UserLogin.getUserLogin(context, value.toString());
+        });
+      }
+    });
 
     super.initState();
+  }
+
+  setCachePhoneNum(int value) {
+    setState(() {
+      _cachedPhoneNumber = value;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       body: Stack(
         children: [
           Column(
@@ -36,44 +50,18 @@ class _LoginState extends State<Login> {
               Expanded(
                 flex: 2,
                 child: Container(
-                  color: Colors.blueAccent,
+                  color: AppDataBLoC.primaryColor,
                 ),
               ),
               Expanded(
                 child: Container(
-                  color: Colors.white,
+                  color: AppDataBLoC.secondaryColor,
                 ),
               ),
             ],
           ),
-          FutureBuilder(
-            future: _cachedPhoneNumber.then((value) {
-              if (value != 0) UserLogin.getUserLogin(context, value.toString());
-              return value;
-            }),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData)
-                return Center(
-                  child: Container(
-                    height: 60,
-                    width: 60,
-                    child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    ),
-                  ),
-                );
-              else if (snapshot.data != 0)
-                return Center(
-                  child: Container(
-                    height: 60,
-                    width: 60,
-                    child: CircularProgressIndicator(
-                        valueColor:
-                            AlwaysStoppedAnimation<Color>(Colors.white)),
-                  ),
-                );
-              else
-                return Padding(
+          _cachedPhoneNumber == 0
+              ? Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -91,19 +79,22 @@ class _LoginState extends State<Login> {
                                   Text(
                                     "R",
                                     style: TextStyle(
-                                        fontSize: 72, color: Colors.white),
+                                        fontSize: 72,
+                                        color: AppDataBLoC.secondaryColor),
                                   ),
                                   Text(
                                     "\nT",
                                     style: TextStyle(
-                                        fontSize: 72, color: Colors.white),
+                                        fontSize: 72,
+                                        color: AppDataBLoC.secondaryColor),
                                   ),
                                 ],
                               ),
                               Center(
                                 child: Text(
                                   "Raghuvir Traders",
-                                  style: TextStyle(color: Colors.white),
+                                  style: TextStyle(
+                                      color: AppDataBLoC.secondaryColor),
                                 ),
                               )
                             ],
@@ -116,9 +107,18 @@ class _LoginState extends State<Login> {
                       ),
                     ],
                   ),
-                );
-            },
-          ),
+                )
+              : Center(
+                  child: Container(
+                    height: 30.0,
+                    width: 30.0,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2.0,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                          AppDataBLoC.secondaryColor),
+                    ),
+                  ),
+                ),
         ],
       ),
     );
@@ -156,14 +156,14 @@ class _LoginState extends State<Login> {
 //                  UserLoginService.sendOtp(_phoneNumber);
                   _showOTPDialog();
                 },
-                color: Colors.blueAccent,
+                color: AppDataBLoC.primaryColor,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.0),
                 ),
                 child: Center(
                     child: Text(
                   "LOGIN",
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: AppDataBLoC.secondaryColor),
                 )),
               ),
             ],
@@ -183,7 +183,7 @@ class _LoginState extends State<Login> {
           },
           child: Text(
             "Login as Admin",
-            style: TextStyle(color: Colors.blue),
+            style: TextStyle(color: AppDataBLoC.primaryColor),
           ),
         ),
       ),
