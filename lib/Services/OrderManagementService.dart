@@ -40,7 +40,7 @@ class OrderManagementService {
         'PaymentMode': paymentMode
       }),
     );
-    print(response.statusCode);
+    //print(response.statusCode);
     if (response.statusCode == 200) {
       return "Success";
     } else

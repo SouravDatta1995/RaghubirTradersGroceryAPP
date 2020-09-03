@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:raghuvir_traders/Elements/AppDataBLoC.dart';
 import 'package:raghuvir_traders/Elements/UserLogin.dart';
+import 'package:raghuvir_traders/Services/UserLoginService.dart';
 import 'package:raghuvir_traders/Widgets/AdminLoginWidget.dart';
 import 'package:raghuvir_traders/Widgets/OTPWidget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -152,8 +153,8 @@ class _LoginState extends State<Login> {
               ),
               RaisedButton(
                 onPressed: () {
-//                  TODO : Uncomment for otp
-//                  UserLoginService.sendOtp(_phoneNumber);
+                  //TODO
+                  UserLoginService.sendOtp(_phoneNumber);
                   _showOTPDialog();
                 },
                 color: AppDataBLoC.primaryColor,

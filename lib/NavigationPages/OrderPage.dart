@@ -366,8 +366,14 @@ class _PaymentSelectorCardState extends State<PaymentSelectorCard> {
         AppDataBLoC.setLastCart().then((value) =>
             Navigator.pushNamedAndRemoveUntil(
                 context, CustomerOrderHistory.id, (route) => false));
-      } else
-        print("Error");
+      } else {
+        Scaffold.of(context).showSnackBar(SnackBar(
+          content: Text(
+            "Payment Failed, Please contact Customer Care if money deducted",
+          ),
+          duration: Duration(seconds: 3),
+        ));
+      }
     });
   }
 
@@ -384,8 +390,14 @@ class _PaymentSelectorCardState extends State<PaymentSelectorCard> {
       if (value == "Success") {
         Navigator.pushNamedAndRemoveUntil(
             context, CustomerOrderHistory.id, (route) => false);
-      } else
-        print("Error");
+      } else {
+        Scaffold.of(context).showSnackBar(SnackBar(
+          content: Text(
+            "Payment Failed, Please contact Customer Care if money deducted",
+          ),
+          duration: Duration(seconds: 3),
+        ));
+      }
     });
     //print("Wallet");
   }
@@ -514,7 +526,9 @@ class _PaymentSelectorCardState extends State<PaymentSelectorCard> {
                                             CustomerOrderHistory.id,
                                             (route) => false));
                                   } else {
-                                    print("Error");
+                                    Scaffold.of(context).showSnackBar(SnackBar(
+                                      content: Text("Some Error Occurred"),
+                                    ));
                                   }
                                 });
                             });

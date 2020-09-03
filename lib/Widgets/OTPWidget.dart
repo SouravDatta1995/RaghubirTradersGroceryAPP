@@ -17,8 +17,7 @@ class _OTPWidgetState extends State<OTPWidget> {
   String _otpCode;
   bool _isAutoFill, _resendStatus, _validOtp;
   _getSignature() async {
-    String signature = await SmsAutoFill().getAppSignature;
-    print("Signature : " + signature);
+    await SmsAutoFill().getAppSignature;
   }
 
   _onOtpCallback(String otpCode) {
@@ -35,7 +34,7 @@ class _OTPWidgetState extends State<OTPWidget> {
     _resendStatus = false;
     _loginLoad = true;
     _validOtp = true;
-//    _getSignature();
+    _getSignature();
   }
 
   @override
@@ -47,6 +46,7 @@ class _OTPWidgetState extends State<OTPWidget> {
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
+      backgroundColor: AppDataBLoC.secondaryColor,
       children: <Widget>[
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
@@ -167,6 +167,7 @@ class _OTPWidgetState extends State<OTPWidget> {
   Widget _loginButton() {
     return _otpCode.length != 4
         ? RaisedButton(
+            color: AppDataBLoC.secondaryColor,
             child: Text("Submit"),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8.0),
@@ -187,6 +188,7 @@ class _OTPWidgetState extends State<OTPWidget> {
                     phoneNumber: widget.phoneNumber,
                     loginLoad: _callbackLoginLoad,
                     validateOtp: _callbackValidateOtp,
+                    otpCode: _otpCode,
                   )
                 : Text("Submit"),
             shape: RoundedRectangleBorder(
@@ -209,9 +211,14 @@ class _OTPWidgetState extends State<OTPWidget> {
 }
 
 class OtpButton extends StatefulWidget {
-  final String phoneNumber;
+  final String phoneNumber, otpCode;
   final Function(bool) validateOtp, loginLoad;
-  const OtpButton({Key key, this.phoneNumber, this.validateOtp, this.loginLoad})
+  const OtpButton(
+      {Key key,
+      this.phoneNumber,
+      this.validateOtp,
+      this.loginLoad,
+      this.otpCode})
       : super(key: key);
 
   @override
@@ -221,7 +228,9 @@ class OtpButton extends StatefulWidget {
 class _OtpButtonState extends State<OtpButton> {
   @override
   void initState() {
-    UserLogin.getUserLogin(context, widget.phoneNumber).then((value) {
+    //TODO
+    UserLogin.getUserLoginViaOtp(context, widget.phoneNumber, widget.otpCode)
+        .then((value) {
       if (value.keys.toList()[0] == "Error") {
         widget.validateOtp(false);
       }
