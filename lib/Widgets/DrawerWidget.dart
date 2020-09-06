@@ -6,6 +6,7 @@ import 'package:raghuvir_traders/NavigationPages/CartPage.dart';
 import 'package:raghuvir_traders/NavigationPages/CustomerHomePage..dart';
 import 'package:raghuvir_traders/NavigationPages/CustomerOrderHistory.dart';
 import 'package:raghuvir_traders/NavigationPages/OrderMedicinePage.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DrawerWidget extends StatefulWidget {
   final String currentPage;
@@ -166,6 +167,18 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                 Text(
                   "Powered by : Mukherjee Solutions",
                   style: TextStyle(color: AppDataBLoC.primaryColor),
+                ),
+                GestureDetector(
+                  excludeFromSemantics: false,
+                  onTap: () {
+                    launch(
+                      'https://mukherjeesolution1.wixsite.com/tech',
+                    );
+                  },
+                  child: Text(
+                    "Website",
+                    style: TextStyle(color: Colors.blue),
+                  ),
                 ),
                 Text(
                   "Contact : 7059249929",

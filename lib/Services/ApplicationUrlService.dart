@@ -3,7 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 class ApplicationUrlService {
   static void launchWhatsApp() async {
     String url() {
-      return "whatsapp://send?phone=+919477014134";
+      return "whatsapp://send?phone=+919022225470";
     }
 
     if (await canLaunch(url())) {
@@ -15,7 +15,7 @@ class ApplicationUrlService {
 
   static void launchPhone() async {
     String url() {
-      return "tel:+919477014134";
+      return "tel:+919022225470";
     }
 
     if (await canLaunch(url())) {

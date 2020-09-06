@@ -17,7 +17,11 @@ class _OTPWidgetState extends State<OTPWidget> {
   String _otpCode;
   bool _isAutoFill, _resendStatus, _validOtp;
   _getSignature() async {
-    await SmsAutoFill().getAppSignature;
+    await SmsAutoFill().getAppSignature.then((value) => showDialog(
+        context: this.context,
+        child: SimpleDialog(
+          children: [Text(value.toString())],
+        )));
   }
 
   _onOtpCallback(String otpCode) {
@@ -34,7 +38,7 @@ class _OTPWidgetState extends State<OTPWidget> {
     _resendStatus = false;
     _loginLoad = true;
     _validOtp = true;
-    _getSignature();
+    //_getSignature();
   }
 
   @override
